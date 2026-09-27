@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Obsidian 個人工作區狀態（不需版控）
+.obsidian/workspace*
+.obsidian/cache
+.trash/
+
+# 暫存
+*.tmp

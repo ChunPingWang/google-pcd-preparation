@@ -14,7 +14,7 @@ updated: 2026-09-27
 
 | 設定 | 位置 | 值 | 為什麼 |
 |---|---|---|---|
-| Wikilinks | Settings → Files & Links → **Use [[Wikilinks]]** | 開啟 | 本 Vault 全部用 `[[雙括號]]` 連結 |
+| Wikilinks | Settings → Files & Links → **Use Wikilinks** | 開啟 | 本 Vault 全部用 `[[ ]]` 雙括號連結 |
 | Default location for new notes | Files & Links | `Same folder as current file` | 新增筆記不會亂跑 |
 | Strict line breaks | Editor | **關閉** | 表格與列表排版才正常 |
 | Readable line length | Appearance | 開啟 | 長篇筆記好讀 |

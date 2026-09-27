@@ -23,7 +23,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart LR
@@ -45,7 +48,7 @@ flowchart LR
 
 ---
 
-## 📬 傳遞方式
+### 📬 傳遞方式
 
 | 類型 | 機制 | 適合 |
 |---|---|---|
@@ -74,7 +77,7 @@ gcloud pubsub subscriptions create orders-email \
 
 ---
 
-## ⏱ Ack、重試與 Dead-letter（**最重要的考點群**）
+### ⏱ Ack、重試與 Dead-letter（**最重要的考點群**）
 
 ```mermaid
 flowchart TD
@@ -102,7 +105,7 @@ flowchart TD
 > 重複送達是**正常行為**，不是 bug。原因包括：ack 遺失、處理超過 deadline、內部重試。
 > → **消費端必須冪等。** 這是 PCD 最愛考的設計題，詳見 [[韌性模式 重試 冪等 退避 斷路器]]。
 
-### Exactly-once delivery
+#### Exactly-once delivery
 - 可在**訂閱層啟用**（`--enable-exactly-once-delivery`），適用 pull 訂閱。
 - 保證：在 ack 成功後**不會再重送**同一則訊息（單一訂閱範圍內）。
 - **仍然不是端到端 exactly-once 處理**：如果你的處理已完成但 ack 前程序崩潰，重啟後還是會再處理一次 → **冪等仍然需要**。
@@ -110,7 +113,7 @@ flowchart TD
 
 ---
 
-## 🔢 其他關鍵限制（查核日 2026-09-27）
+### 🔢 其他關鍵限制（查核日 2026-09-27）
 
 | 項目 | 值 |
 |---|---|
@@ -127,9 +130,9 @@ flowchart TD
 
 ---
 
-## 🔢 順序、篩選與結構
+### 🔢 順序、篩選與結構
 
-### Ordering keys（順序保證）
+#### Ordering keys（順序保證）
 ```python
 publisher = pubsub_v1.PublisherClient(
     publisher_options=pubsub_v1.types.PublisherOptions(enable_message_ordering=True))
@@ -140,7 +143,7 @@ publisher.publish(topic, b'{"id":1}', ordering_key="user-123")   # 同 key 保�
 - 考點：「同一個帳戶的事件必須依序處理」→ ordering key = accountId。
 - 反考點：「全域嚴格順序」→ Pub/Sub 不適合，要重新設計（或用單一 key，但會犧牲吞吐）。
 
-### Subscription filter
+#### Subscription filter
 ```bash
 gcloud pubsub subscriptions create orders-vip --topic=orders \
   --message-filter='attributes.tier = "vip"'
@@ -149,13 +152,13 @@ gcloud pubsub subscriptions create orders-vip --topic=orders \
 - **建立後不能修改** filter。
 - 好處：不符合的訊息由 Pub/Sub 直接 ack 掉，訂閱者收不到 → 省下游成本。
 
-### Schema
+#### Schema
 - topic 可綁 **Avro / Protocol Buffers** schema，發布時驗證 → 防止破壞性變更。
 - 考點：「確保發布者不會送出不合格式的訊息」→ **topic schema**。
 
 ---
 
-## 💻 消費端程式碼（含冪等）
+### 💻 消費端程式碼（含冪等）
 
 ```python
 from google.cloud import pubsub_v1, firestore
@@ -190,7 +193,10 @@ future.result()
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -210,7 +216,7 @@ future.result()
 
 ---
 
-## ⚖️ Pub/Sub vs Cloud Tasks（**必考對照**）
+### ⚖️ Pub/Sub vs Cloud Tasks（**必考對照**）
 
 | | **Pub/Sub** | **Cloud Tasks** |
 |---|---|---|
@@ -225,7 +231,7 @@ future.result()
 
 ---
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **以為多個 consumer = 每個都收到**：那是負載分攤。要扇出就多建 subscription。
 2. **ack deadline 太短**：處理 30 秒但 deadline 10 秒 → 訊息被反覆重送，系統看起來「越忙越重複」。
@@ -235,7 +241,7 @@ future.result()
 6. **filter 建立後想改**：不能改，只能新建訂閱。
 7. **忘記 Pub/Sub 的 IAM**：`roles/pubsub.publisher` / `subscriber` 要給對的 SA；push 還要 invoker。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 一個 topic、兩個 subscription、每個 subscription 三個 consumer → 一則訊息會被處理幾次（正常情況）？
 2. Ack deadline 的預設值與上限？處理需要 20 分鐘怎麼辦？

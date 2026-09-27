@@ -20,7 +20,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧱 Kubernetes Network Policy
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧱 Kubernetes Network Policy
 
 **預設行為**：Kubernetes 叢集內**所有 Pod 可以互相通訊**（全通）。Network Policy 讓你收斂它。
 
@@ -77,7 +80,7 @@ spec:
 
 ---
 
-## 🕸 Cloud Service Mesh
+### 🕸 Cloud Service Mesh
 
 **定位**：Google 代管的服務網格（以 Istio / Envoy 為基礎），提供**身分、加密、流量管理與可觀測性**，且**不用改應用程式碼**。
 
@@ -97,7 +100,7 @@ flowchart LR
     CP --- TM["流量管理<br/>(canary 權重 / retry / timeout /<br/>circuit breaking / fault injection)"]
 ```
 
-### 四大能力
+#### 四大能力
 | 能力 | 說明 | 對應考點 |
 |---|---|---|
 | **自動 mTLS** | sidecar 之間自動雙向 TLS，憑證自動輪替 | 「服務間通訊要加密且雙向驗證，但不想改程式」 |
@@ -151,7 +154,7 @@ spec:
 
 ---
 
-## ⚖️ 三層防護的分工（**必考對照**）
+### ⚖️ 三層防護的分工（**必考對照**）
 
 | 層 | 工具 | 回答的問題 |
 |---|---|---|
@@ -168,7 +171,10 @@ spec:
 
 ---
 
-## 💣 真實場景陷阱
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 💣 真實場景陷阱
 
 1. **egress policy 忘記放行 DNS**：整個服務看起來「什麼都連不到」。
 2. **以為 Network Policy 能看 HTTP 路徑**：它只到 L4。要 L7 就得用 mesh。
@@ -177,7 +183,7 @@ spec:
 5. **忘記 Autopilot 的限制**：sidecar 注入可行，但某些低階網路操作受限。
 6. **只做加密不做授權**：mTLS 只證明「對方是網格成員」，還要 AuthorizationPolicy 才限制「能做什麼」。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Kubernetes 的預設 Pod 間通訊行為是什麼？Network Policy 如何改變它？
 2. 加了 egress policy 後 Pod 什麼都連不到，最可能漏了什麼？

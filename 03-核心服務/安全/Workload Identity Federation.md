@@ -18,7 +18,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart LR
@@ -43,7 +46,7 @@ flowchart LR
 
 ---
 
-## ⚙️ 設定範例：GitHub Actions 部署到 Cloud Run
+### ⚙️ 設定範例：GitHub Actions 部署到 Cloud Run
 
 ```bash
 # 1) 建立 pool 與 provider
@@ -82,7 +85,7 @@ jobs:
 
 ---
 
-## 🧩 三種 principal 寫法（考試會出現）
+### 🧩 三種 principal 寫法（考試會出現）
 
 | 寫法 | 範圍 |
 |---|---|
@@ -96,7 +99,7 @@ jobs:
 
 ---
 
-## 🆚 相關但不同的三個東西（**高頻混淆**）
+### 🆚 相關但不同的三個東西（**高頻混淆**）
 
 | 名稱 | 用在哪 | 解決什麼 |
 |---|---|---|
@@ -108,7 +111,10 @@ jobs:
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -121,7 +127,7 @@ jobs:
 | `employees log in with Okta to use the Console` | **Workforce Identity Federation** |
 | `organization policy to ban SA keys` | `constraints/iam.disableServiceAccountKeyCreation` |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **沒設 `attribute-condition`**：任何 GitHub repo 的 workflow 都能拿到你的憑證 → **嚴重漏洞**。條件是必需的，不是可選的。
 2. **忘了 `id-token: write` 權限**：GitHub workflow 拿不到 OIDC token，錯誤訊息不明顯。
@@ -130,7 +136,7 @@ jobs:
 5. **把 WIF 設定檔當成祕密保護**：那個 JSON 設定檔**不含祕密**（它只描述如何交換），可以放進版控。
 6. **憑證有效期沒考慮**：長時間的 job 需要處理 token 續期（用戶端程式庫通常會處理）。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. WIF 的四個步驟是什麼？哪一步驗證信任？
 2. 為什麼 `attribute-condition` 是必要的？不設會怎樣？

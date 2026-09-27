@@ -18,7 +18,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart LR
@@ -39,7 +42,7 @@ flowchart LR
 
 ---
 
-## ⚙️ 常用操作
+### ⚙️ 常用操作
 
 ```bash
 # 建立佇列並限制速率（保護下游的第三方 API）
@@ -92,7 +95,7 @@ client.create_task(parent=parent, task=task)
 
 ---
 
-## 🎯 典型使用場景
+### 🎯 典型使用場景
 
 | 場景 | 為什麼 Cloud Tasks 最合適 |
 |---|---|
@@ -110,7 +113,7 @@ client.create_task(parent=parent, task=task)
 
 ---
 
-## ⚖️ Cloud Tasks vs Pub/Sub vs Workflows vs Scheduler
+### ⚖️ Cloud Tasks vs Pub/Sub vs Workflows vs Scheduler
 
 | 需求 | 選擇 |
 |---|---|
@@ -124,7 +127,10 @@ client.create_task(parent=parent, task=task)
 
 ---
 
-## 💣 真實場景陷阱
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 💣 真實場景陷阱
 
 1. **Worker 不冪等**：重試會重複寄信/重複扣款。用 task name 或業務冪等鍵去重。
 2. **`dispatch_deadline` 比 worker 實際處理時間短**：Cloud Tasks 判定失敗並重試，造成重複處理。
@@ -133,7 +139,7 @@ client.create_task(parent=parent, task=task)
 5. **佇列速率設太高**：把下游打掛，失去使用 Cloud Tasks 的意義。
 6. **忘記 `actAs` 權限**：建立帶 OIDC 的任務會失敗，錯誤訊息不直觀。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Cloud Tasks 與 Pub/Sub 的四個決定性差異？
 2. 「呼叫每秒只能 10 次的第三方 API」怎麼設定？

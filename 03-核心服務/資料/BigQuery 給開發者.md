@@ -19,7 +19,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart LR
@@ -38,7 +41,7 @@ flowchart LR
 
 ---
 
-## ⬆️ 把資料寫進 BigQuery 的四種方式（考點）
+### ⬆️ 把資料寫進 BigQuery 的四種方式（考點）
 
 | 方式 | 特性 | 用時機 |
 |---|---|---|
@@ -61,7 +64,7 @@ from google.cloud import bigquery_storage_v1
 
 ---
 
-## 💰 成本控制（開發者最常踩的坑）
+### 💰 成本控制（開發者最常踩的坑）
 
 | 手段 | 說明 |
 |---|---|
@@ -99,7 +102,7 @@ GROUP BY user_id;
 
 ---
 
-## 🔐 存取控制
+### 🔐 存取控制
 
 | 層級 | 機制 |
 |---|---|
@@ -114,7 +117,7 @@ GROUP BY user_id;
 
 ---
 
-## 🤝 與應用整合的實務要點
+### 🤝 與應用整合的實務要點
 
 - **查詢是 job**：非同步提交，用 job ID 追蹤。長查詢不要綁在 HTTP 請求上（用 [[Cloud Tasks]] 或 [[Workflows 與 Cloud Scheduler]]）。
 - **`jobs.query` 的 `maximumBytesBilled` 與 `dryRun`**：`dryRun` 可以先估掃描量（免費）→ **上線前防爆的好習慣**。
@@ -141,7 +144,10 @@ rows = client.query(
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -156,7 +162,7 @@ rows = client.query(
 | `查詢 GCS 上的檔案但不想搬進 BQ` | **外部表 / BigLake** |
 | `OLTP 高頻小量讀寫` | **不是** BigQuery → Firestore / Cloud SQL / Spanner |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **`SELECT *` 在 PB 級表上**：一次查詢燒掉整月預算。
 2. **忘記分區裁剪**：分區表但查詢沒帶 `WHERE` 分區條件 → 全表掃描。
@@ -165,7 +171,7 @@ rows = client.query(
 5. **串流資料立即 UPDATE/DELETE**：streaming buffer 內的資料有限制。
 6. **字串拼接 SQL**：injection 風險。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 把應用事件送進 BigQuery 有哪四種方式？成本與即時性各如何？
 2. 為什麼 `SELECT * ... LIMIT 10` 不省錢？要看資料長相該怎麼做？

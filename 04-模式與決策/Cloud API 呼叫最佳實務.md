@@ -19,7 +19,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧰 第一原則：用 Cloud Client Libraries
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧰 第一原則：用 Cloud Client Libraries
 
 | 選項 | 何時用 |
 |---|---|
@@ -33,7 +36,7 @@ updated: 2026-09-27
 > 「呼叫 Cloud API 的建議方式」→ **Cloud Client Libraries**。
 > 理由要能說出來：**驗證（ADC）、重試、分頁、慣用語法都已內建** → 少寫錯少踩坑。
 
-### 啟用服務（容易漏）
+#### 啟用服務（容易漏）
 ```bash
 gcloud services enable run.googleapis.com pubsub.googleapis.com firestore.googleapis.com
 gcloud services list --enabled
@@ -42,7 +45,7 @@ gcloud services list --enabled
 
 ---
 
-## 1️⃣ 用戶端重用（最常見的效能錯誤）
+### 1️⃣ 用戶端重用（最常見的效能錯誤）
 
 ```python
 # ✅ 全域建立一次，跨請求重用（Cloud Run 實例生命週期內共用）
@@ -63,7 +66,7 @@ def bad(request):
 
 ---
 
-## 2️⃣ 分頁（Pagination）
+### 2️⃣ 分頁（Pagination）
 
 ```python
 # ✅ 用 iterator，程式庫自動翻頁，記憶體恆定
@@ -83,7 +86,7 @@ all_blobs = list(gcs.list_blobs("my-bucket"))
 
 ---
 
-## 3️⃣ 限制回傳資料（Field mask / 部分回應）
+### 3️⃣ 限制回傳資料（Field mask / 部分回應）
 
 ```python
 # 只取需要的欄位 → 省頻寬、省延遲、省序列化成本
@@ -102,7 +105,7 @@ gcloud compute instances list --format="value(name)"
 
 ---
 
-## 4️⃣ 批次請求（Batching）
+### 4️⃣ 批次請求（Batching）
 
 | 服務 | 批次方式 |
 |---|---|
@@ -133,7 +136,7 @@ batch.commit()
 
 ---
 
-## 5️⃣ 快取結果
+### 5️⃣ 快取結果
 
 | 什麼值得快取 | 放哪 |
 |---|---|
@@ -150,9 +153,9 @@ batch.commit()
 
 ---
 
-## 6️⃣ 錯誤處理（官方明文考點）
+### 6️⃣ 錯誤處理（官方明文考點）
 
-### 錯誤碼 → 行動 對照表（**必背**）
+#### 錯誤碼 → 行動 對照表（**必背**）
 | 錯誤 | gRPC 名稱 | 重試？ | 行動 |
 |---|---|---|---|
 | 400 | `INVALID_ARGUMENT` | ❌ | 修請求 |
@@ -168,7 +171,7 @@ batch.commit()
 | 503 | `UNAVAILABLE` | ✅ 退避 | 暫時性 |
 | 504 | `DEADLINE_EXCEEDED` | ⚠️ 退避（**需冪等**） | 可能已執行成功 |
 
-### 用程式庫的內建重試（推薦）
+#### 用程式庫的內建重試（推薦）
 ```python
 from google.api_core import retry, exceptions
 from google.cloud import storage
@@ -186,7 +189,7 @@ blob.upload_from_string("data", retry=custom_retry, timeout=30)
 
 ---
 
-## 7️⃣ 配額與速率限制
+### 7️⃣ 配額與速率限制
 
 | 概念 | 說明 |
 |---|---|
@@ -199,7 +202,10 @@ blob.upload_from_string("data", retry=custom_retry, timeout=30)
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -216,7 +222,7 @@ blob.upload_from_string("data", retry=custom_retry, timeout=30)
 | `should we cache access tokens?` | **程式庫已處理**，不要自己管 |
 | `batch has higher throughput but...` | **延遲增加**（取捨） |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **每請求建立用戶端**：最常見的效能問題。
 2. **`list()` 全抓**：OOM 或超時。
@@ -227,7 +233,7 @@ blob.upload_from_string("data", retry=custom_retry, timeout=30)
 7. **忽略部分成功**：批次中有幾筆失敗但程式當成全部成功。
 8. **timeout 沒設**：呼叫卡住直到請求逾時。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 官方列出的五個 API 呼叫最佳實務是什麼？
 2. 為什麼要重用用戶端？在 Cloud Run 上放哪裡？

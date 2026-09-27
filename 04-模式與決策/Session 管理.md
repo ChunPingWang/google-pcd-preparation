@@ -18,7 +18,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 三種策略
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 三種策略
 
 ```mermaid
 flowchart TD
@@ -31,7 +34,7 @@ flowchart TD
 
 ---
 
-## ① 無狀態 Token（JWT）
+### ① 無狀態 Token（JWT）
 
 ```mermaid
 sequenceDiagram
@@ -59,7 +62,7 @@ sequenceDiagram
 
 ---
 
-## ② 外部 Session 儲存（考試最常見的正解）
+### ② 外部 Session 儲存（考試最常見的正解）
 
 | 儲存 | 適合 | 特性 |
 |---|---|---|
@@ -94,7 +97,7 @@ def destroy_session(sid):
 > 這是「Cloud Run 存 session 到 Memorystore」題目的完整答案（不只是「用 Redis」）。
 > 見 [[VPC 連線 Serverless VPC Access 與 Direct VPC Egress]]。
 
-### Cookie 的安全設定（會考）
+#### Cookie 的安全設定（會考）
 ```
 Set-Cookie: sid=<value>; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=1800
 ```
@@ -108,7 +111,7 @@ Set-Cookie: sid=<value>; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=1800
 
 ---
 
-## ③ Session Affinity（**不是狀態方案**）
+### ③ Session Affinity（**不是狀態方案**）
 
 > [!warning] 為什麼不能靠它
 > 1. 實例會因**擴縮、部署、故障**而消失 → 那些使用者的狀態直接不見。
@@ -125,7 +128,7 @@ Set-Cookie: sid=<value>; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=1800
 
 ---
 
-## 🧩 其他狀態類型的正確去處
+### 🧩 其他狀態類型的正確去處
 
 | 狀態類型 | 放哪裡 |
 |---|---|
@@ -137,14 +140,17 @@ Set-Cookie: sid=<value>; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=1800
 | 表單多步驟的中間狀態 | Redis（短 TTL）或前端狀態 |
 | WebSocket 連線狀態 | 連線本身在實例上（用 affinity）；但**訊息廣播要透過 Pub/Sub 或 Redis pub/sub**，不能假設所有連線在同一實例 |
 
-### WebSocket / SSE 在 serverless 上的注意事項
+#### WebSocket / SSE 在 serverless 上的注意事項
 - Cloud Run 支援 WebSocket，但**實例可能被回收** → 客戶端要能自動重連。
 - 廣播訊息給所有連線的使用者 → **不能**只在單一實例的記憶體裡遍歷連線；要用 **Redis pub/sub 或 Pub/Sub** 讓每個實例通知自己持有的連線。
 - 請求逾時上限（60 分鐘）也適用於長連線。
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -159,7 +165,7 @@ Set-Cookie: sid=<value>; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=1800
 | `session cookie security` | `HttpOnly; Secure; SameSite` + 高熵 ID + 登入後輪替 |
 | `broadcast to all connected WebSocket clients` | Redis pub/sub 或 **Pub/Sub** 扇出到每個實例 |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **用 affinity 當 session 儲存**：縮容/部署時大量使用者被登出。
 2. **JWT 放敏感資料**：payload 只是 base64，任何人都能看。
@@ -169,7 +175,7 @@ Set-Cookie: sid=<value>; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=1800
 6. **session ID 可預測**（自增、時間戳）：可被猜測劫持。
 7. **Cloud Run 忘記進 VPC**：連不上 Memorystore，錯誤是 timeout 而非權限錯誤。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 三種 session 策略的優缺點？考試最常見的正解是哪個？
 2. 為什麼 session affinity 不是狀態方案？它的正當用途是什麼？

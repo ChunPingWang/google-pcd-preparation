@@ -19,7 +19,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart TD
@@ -39,7 +42,7 @@ flowchart TD
 
 ---
 
-## 🗂 Storage Class（必背）
+### 🗂 Storage Class（必背）
 
 | Class | 用途 | 最短儲存期 🔢 | 取用費 | 可用性 SLA |
 |---|---|---|---|---|
@@ -55,7 +58,7 @@ flowchart TD
 **Autoclass**：讓 GCS 依實際存取模式自動在 class 間搬移。
 → 考題關鍵詞：`access patterns are unknown or unpredictable` + `optimize cost without managing rules`。
 
-### 位置類型
+#### 位置類型
 | 類型 | 說明 | 用途 |
 |---|---|---|
 | **Region**（如 `asia-east1`） | 單一區域 | 與同區的運算共置，延遲最低、費用最低 |
@@ -66,7 +69,7 @@ flowchart TD
 
 ---
 
-## ♻️ 物件生命週期管理（Object Lifecycle Management, OLM）
+### ♻️ 物件生命週期管理（Object Lifecycle Management, OLM）
 
 考點：**自動降級 class + 自動刪除**，用來同時滿足**成本**與**資料保留政策**。
 
@@ -105,7 +108,7 @@ gcloud storage buckets update gs://my-bucket --lifecycle-file=lifecycle.json
 
 ---
 
-## 🔒 保留與合規
+### 🔒 保留與合規
 
 | 機制 | 作用 | 關鍵特性 |
 |---|---|---|
@@ -121,7 +124,7 @@ gcloud storage buckets update gs://my-bucket --lifecycle-file=lifecycle.json
 
 ---
 
-## 🔑 存取控制
+### 🔑 存取控制
 
 | 機制 | 說明 | 建議 |
 |---|---|---|
@@ -132,7 +135,7 @@ gcloud storage buckets update gs://my-bucket --lifecycle-file=lifecycle.json
 | **Signed policy document** | 限制瀏覽器表單上傳的條件（大小、類型） | 直接從 HTML form 上傳 |
 | **公開存取** | 給 `allUsers` 加 `roles/storage.objectViewer` | 只用於真正公開的靜態資源 |
 
-### Signed URL（**必考**）
+#### Signed URL（**必考**）
 ```bash
 # 用服務帳戶簽署，有效 15 分鐘的下載連結
 gcloud storage sign-url gs://my-bucket/report.pdf --duration=15m \
@@ -162,7 +165,7 @@ write_url = blob.generate_signed_url(
 
 ---
 
-## ⬆️ 上傳與下載
+### ⬆️ 上傳與下載
 
 | 方式 | 適用 |
 |---|---|
@@ -181,7 +184,7 @@ write_url = blob.generate_signed_url(
 
 ---
 
-## 🔢 關鍵限制（概念性）
+### 🔢 關鍵限制（概念性）
 
 | 項目 | 值 |
 |---|---|
@@ -194,7 +197,10 @@ write_url = blob.generate_signed_url(
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -213,7 +219,7 @@ write_url = blob.generate_signed_url(
 
 ---
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **把 Archive 當便宜的短期儲存**：7 天後刪除卻被收 365 天費用。
 2. **bucket 與運算不同區**：跨區流量費 + 延遲，量大時費用驚人。
@@ -223,7 +229,7 @@ write_url = blob.generate_signed_url(
 6. **高頻覆寫同一個物件當計數器**：GCS 不是資料庫 → 用 [[Firestore]] 或 [[Memorystore 與快取策略]]。
 7. **忘記設 CORS**：前端直傳 signed URL 時瀏覽器擋下來。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 四種 storage class 的最短儲存期各是多少？「只留 7 天」該怎麼配置最省？
 2. 使用者要上傳 2GB 影片，請描述完整流程（誰簽 URL、用什麼 method、後端做什麼）。

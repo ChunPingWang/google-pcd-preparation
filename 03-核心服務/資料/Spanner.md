@@ -18,7 +18,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart TD
@@ -41,7 +44,7 @@ flowchart TD
 
 ---
 
-## 🗺 執行個體設定（instance configuration）
+### 🗺 執行個體設定（instance configuration）
 
 | 類型 | 可用性 SLA 🔢 | 寫入延遲 | 說明 |
 |---|---|---|---|
@@ -54,9 +57,9 @@ flowchart TD
 
 ---
 
-## 🔑 Schema 設計（考試重點）
+### 🔑 Schema 設計（考試重點）
 
-### 1. 主鍵設計：避免熱點（**必考**）
+#### 1. 主鍵設計：避免熱點（**必考**）
 ```sql
 -- ❌ 單調遞增主鍵 → 所有寫入集中在最後一個 split（熱點）
 CREATE TABLE Events (
@@ -79,7 +82,7 @@ PRIMARY KEY (ShardId, CreatedAt, EventId)
 > **原則**：主鍵的第一個欄位要**分布均勻**。單調遞增（自增 ID、timestamp）= 熱點。
 > 需要按時間查詢時，仍可對 `CreatedAt` 建**二級索引**（Spanner 支援二級索引，[[Bigtable]] 不支援）。
 
-### 2. Interleaved tables（交錯表）
+#### 2. Interleaved tables（交錯表）
 把子表的資料**實體上存在父表列的旁邊**，讓 JOIN 與一起讀取變得很快。
 
 ```sql
@@ -99,7 +102,7 @@ CREATE TABLE Orders (
 > 「父子關係 + 幾乎總是一起查」→ interleave（例如 Customer 與其 Orders）。
 > 「子表資料量極大、且常獨立查詢」→ 不要 interleave（避免單一父鍵下的資料過大）。
 
-### 3. 二級索引與 STORING
+#### 3. 二級索引與 STORING
 ```sql
 CREATE INDEX OrdersByDate ON Orders(CreatedAt DESC);
 -- 覆蓋索引：把常用欄位放進索引，查詢不用回主表
@@ -107,7 +110,7 @@ CREATE INDEX OrdersByStatus ON Orders(Status) STORING (Total, CustomerId);
 ```
 **強制使用索引**：`SELECT ... FROM Orders@{FORCE_INDEX=OrdersByStatus} WHERE ...`
 
-### 4. 其他要知道的
+#### 4. 其他要知道的
 - **`NUMERIC`** 型別做金額（避免浮點誤差）。
 - **`ARRAY` / `STRUCT`** 支援半結構化資料；也支援 **JSON** 型別。
 - **Commit timestamp**：`OPTIONS (allow_commit_timestamp=true)` → 讓 Spanner 填入提交時間（單調，但要注意熱點）。
@@ -115,7 +118,7 @@ CREATE INDEX OrdersByStatus ON Orders(Status) STORING (Total, CustomerId);
 
 ---
 
-## 🔄 讀取模式（考點）
+### 🔄 讀取模式（考點）
 
 | 模式 | 說明 | 使用時機 |
 |---|---|---|
@@ -138,7 +141,7 @@ with database.snapshot(exact_staleness=datetime.timedelta(seconds=15)) as snapsh
 
 ---
 
-## ⚙️ 常用操作
+### ⚙️ 常用操作
 
 ```bash
 gcloud spanner instances create prod \
@@ -157,7 +160,10 @@ export SPANNER_EMULATOR_HOST=localhost:9010
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -172,7 +178,7 @@ export SPANNER_EMULATOR_HOST=localhost:9010
 | `既有 PostgreSQL 想水平擴展` | Spanner **PostgreSQL 方言**（或先評估 AlloyDB） |
 | `成本敏感、單區域、資料量不大` | **不要** Spanner → Cloud SQL |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **用自增主鍵**：上線後寫入全擠在一個 split，吞吐上不去。改主鍵要重建表 → 設計階段就要做對。
 2. **無限制的 interleave**：某個父鍵底下塞了千萬列 → split 無法再切（interleave 的資料必須同 split 群組）。
@@ -181,7 +187,7 @@ export SPANNER_EMULATOR_HOST=localhost:9010
 5. **忽略 `ABORTED` 重試**：Spanner 讀寫交易可能因衝突被中止，**用戶端程式庫通常會重試，但你的交易函式必須可重入（沒有副作用）**。
 6. **多區域寫入延遲沒評估**：跨洲寫入延遲可能到數十到上百毫秒。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 為什麼 `PRIMARY KEY (Timestamp)` 是壞設計？三種修法是什麼？
 2. Interleaved table 的好處與風險？什麼情況不該用？

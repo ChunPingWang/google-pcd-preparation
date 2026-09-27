@@ -20,7 +20,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 整合心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 整合心智模型
 
 ```mermaid
 flowchart LR
@@ -38,7 +41,7 @@ flowchart LR
 
 ---
 
-## 🔌 呼叫模型的兩條路
+### 🔌 呼叫模型的兩條路
 
 | | **Vertex AI**（`aiplatform.googleapis.com`） | **Gemini Developer API**（AI Studio 金鑰） |
 |---|---|---|
@@ -69,9 +72,9 @@ print(resp.text)
 
 ---
 
-## 🧩 開發者必懂的五個能力
+### 🧩 開發者必懂的五個能力
 
-### 1. 串流（streaming）
+#### 1. 串流（streaming）
 長回應要用串流，否則使用者要等很久看不到東西。
 ```python
 for chunk in client.models.generate_content_stream(model="gemini-2.5-flash", contents=prompt):
@@ -80,11 +83,11 @@ for chunk in client.models.generate_content_stream(model="gemini-2.5-flash", con
 > [!warning] 與 Cloud Run 的互動
 > 串流回應時間可能長 → 注意 **請求逾時**（預設 5 分鐘，最長 60 分鐘）與 **並行設定**（LLM 呼叫是 I/O 等待，concurrency 可以較高，但記憶體要夠）。見 [[Cloud Run]]。
 
-### 2. 結構化輸出（structured output）
+#### 2. 結構化輸出（structured output）
 用 `response_mime_type="application/json"` + JSON schema → **輸出可以直接餵給程式**，不用正則解析。
 > 這是把 LLM 接進既有系統最重要的技巧。考點：「如何確保模型輸出能被程式可靠解析」→ **結構化輸出 / JSON schema**。
 
-### 3. Function calling（工具呼叫）
+#### 3. Function calling（工具呼叫）
 讓模型「決定要呼叫哪個你提供的函式」，由**你的程式碼實際執行**，再把結果回給模型。
 ```python
 get_order = types.FunctionDeclaration(
@@ -105,7 +108,7 @@ if call and call.name == "get_order_status":
 > **模型的輸出是「請求」，不是「授權」。** 所有權限檢查、輸入驗證、額度檢查都必須在**你的程式碼**裡做。
 > 絕對不要把「模型說可以」當成授權依據 —— 這是 prompt injection 的主要風險。
 
-### 4. Grounding 與 RAG
+#### 4. Grounding 與 RAG
 | 做法 | 說明 |
 |---|---|
 | **Grounding with Google Search** | 讓回答基於搜尋結果，降低幻覺 |
@@ -118,14 +121,14 @@ emb = client.models.embed_content(model="text-embedding-005", contents=["訂單�
 ```
 > 考點：「模型回答公司內部政策時會亂講」→ **RAG / grounding**（不是 fine-tuning，除非是要改變風格或格式）。
 
-### 5. 安全設定與內容過濾
+#### 5. 安全設定與內容過濾
 - **Safety settings**：可調各類別（騷擾、仇恨、危險、露骨）的阻擋門檻。
 - **系統指示（system instruction）**：定義角色與邊界。
 - **輸入/輸出檢查**：自己也要驗證（長度、格式、是否含 PII）。
 
 ---
 
-## 💰 成本與效能（開發者最該注意的）
+### 💰 成本與效能（開發者最該注意的）
 
 | 議題 | 做法 |
 |---|---|
@@ -143,7 +146,10 @@ emb = client.models.embed_content(model="text-embedding-005", contents=["訂單�
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -159,7 +165,7 @@ emb = client.models.embed_content(model="text-embedding-005", contents=["訂單�
 | `prompt injection 風險` | 不信任模型輸出；權限與驗證在程式碼裡 |
 | `sensitive data must not leave the region` | Vertex AI 的 **region 選擇**（+ VPC-SC / CMEK） |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **把 API key 放前端**：直接被盜用。呼叫一律經過你的後端。
 2. **信任模型輸出去執行動作**（如 SQL、刪除資料）：必須白名單化與參數化。
@@ -169,7 +175,7 @@ emb = client.models.embed_content(model="text-embedding-005", contents=["訂單�
 6. **沒有監控 token 成本**：月底帳單驚喜。
 7. **以為要 fine-tuning**：多數「答案不對」的問題是**上下文不足（要 RAG）**或 **prompt 不好**，不是模型能力問題。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Vertex AI 與 Gemini Developer API 的驗證差異？生產環境該選哪個、為什麼？
 2. 如何確保模型輸出能被程式可靠解析？

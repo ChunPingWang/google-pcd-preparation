@@ -19,7 +19,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart LR
@@ -41,7 +44,7 @@ flowchart LR
 
 ---
 
-## 📝 `cloudbuild.yaml` 完整範例
+### 📝 `cloudbuild.yaml` 完整範例
 
 ```yaml
 substitutions:
@@ -118,7 +121,7 @@ options:
 timeout: 1200s
 ```
 
-### 內建替代變數（**會考**）
+#### 內建替代變數（**會考**）
 | 變數 | 內容 |
 |---|---|
 | `$PROJECT_ID` | 專案 ID |
@@ -134,7 +137,7 @@ timeout: 1200s
 
 ---
 
-## ⚡ 加速建置的四招（考題常問）
+### ⚡ 加速建置的四招（考題常問）
 
 | 方法 | 說明 |
 |---|---|
@@ -161,7 +164,7 @@ steps:
 
 ---
 
-## 🔔 觸發器（Triggers）
+### 🔔 觸發器（Triggers）
 
 ```bash
 # push 到 main 就建置
@@ -189,7 +192,7 @@ gcloud builds triggers create github --tag-pattern='^v.*'  ...
 
 ---
 
-## 🔐 安全與權限
+### 🔐 安全與權限
 
 | 項目 | 要點 |
 |---|---|
@@ -207,7 +210,10 @@ gcloud builds triggers create github --tag-pattern='^v.*'  ...
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -223,7 +229,7 @@ gcloud builds triggers create github --tag-pattern='^v.*'  ...
 | `建置後自動做 canary 晉升` | 交給 **Cloud Deploy**（見 [[Cloud Deploy 與部署策略]]） |
 | `build from source without a Dockerfile` | **Buildpacks**（`gcloud run deploy --source .` / `pack`） |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **以為環境變數會跨 step**：不會。要傳值就寫到 `/workspace` 的檔案。
 2. **祕密寫進 substitution**：會出現在 build 紀錄裡。
@@ -232,7 +238,7 @@ gcloud builds triggers create github --tag-pattern='^v.*'  ...
 5. **Cloud Build SA 權限過大**（預設含不少部署權限）：改用自訂 SA 最小化。
 6. **測試在建置後才跑但已經推了映像**：壞映像進了 registry。順序應為「測試 → 建置 → 整合測試 → 推送/簽章」，或推到 staging repo 再晉升。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Cloud Build 的每個 step 本質是什麼？step 之間怎麼共用資料？
 2. 預設是循序還是平行？怎麼讓兩個 step 平行？

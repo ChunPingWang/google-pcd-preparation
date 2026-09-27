@@ -21,7 +21,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 編排 vs 協作（Orchestration vs Choreography）
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 編排 vs 協作（Orchestration vs Choreography）
 
 ```mermaid
 flowchart TB
@@ -52,7 +55,7 @@ flowchart TB
 
 ---
 
-## 🔧 Workflows 實用要點
+### 🔧 Workflows 實用要點
 
 ```yaml
 main:
@@ -133,7 +136,7 @@ main:
 
 ---
 
-## ⏰ Cloud Scheduler 實用要點
+### ⏰ Cloud Scheduler 實用要點
 
 ```bash
 # ① 打 HTTP 端點（Cloud Run，帶 OIDC）
@@ -171,7 +174,7 @@ gcloud scheduler jobs create http run-wf --location=asia-east1 \
 
 ---
 
-## 🧭 四個編排工具的一句話定位（**必背**）
+### 🧭 四個編排工具的一句話定位（**必背**）
 
 | 服務 | 一句話 | 關鍵詞 |
 |---|---|---|
@@ -185,7 +188,10 @@ gcloud scheduler jobs create http run-wf --location=asia-east1 \
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -199,7 +205,7 @@ gcloud scheduler jobs create http run-wf --location=asia-east1 \
 | `call Cloud Run securely from Workflows / Scheduler` | **OIDC** token + `run.invoker` |
 | `saga / compensating transaction` | Workflows（在 `except` 裡執行補償步驟） |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **Scheduler 同步等長任務**：超過 `attempt-deadline` 就重試 → 同一個批次跑兩次。
 2. **忘記設時區**：以為是台北時間，實際是 UTC，差 8 小時。
@@ -208,7 +214,7 @@ gcloud scheduler jobs create http run-wf --location=asia-east1 \
 5. **用 Workflows 做高吞吐事件處理**：它不是串流引擎，每秒上萬事件請用 Pub/Sub（+ Dataflow）。
 6. **權限漏 `actAs`**：Scheduler / Workflows 用 SA 呼叫時需要對該 SA 的 `iam.serviceAccounts.actAs`。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 編排與協作的差別？各自的適用場景與代價？
 2. Workflows 的四個關鍵能力（錯誤處理、分支、平行、callback）分別解決什麼問題？

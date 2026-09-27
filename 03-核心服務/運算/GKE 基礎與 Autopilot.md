@@ -19,7 +19,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart TD
@@ -48,7 +51,7 @@ flowchart TD
 
 ---
 
-## ⚖️ Autopilot vs Standard（必考的責任邊界）
+### ⚖️ Autopilot vs Standard（必考的責任邊界）
 
 | 維度 | **Autopilot** | **Standard** |
 |---|---|---|
@@ -68,9 +71,9 @@ flowchart TD
 
 ---
 
-## 🔑 核心物件（開發者視角）
+### 🔑 核心物件（開發者視角）
 
-### 工作負載
+#### 工作負載
 | 物件 | 用途 | 特徵 |
 |---|---|---|
 | **Pod** | 最小部署單位，1+ 個容器共用網路與儲存 | 不直接建，由控制器管理 |
@@ -79,7 +82,7 @@ flowchart TD
 | **DaemonSet** | 每個節點跑一份 | log agent、監控 agent |
 | **Job / CronJob** | 批次 / 排程 | 跑完結束；CronJob 依 cron 排程 |
 
-### 服務與網路
+#### 服務與網路
 | 物件 | 用途 |
 |---|---|
 | **Service: ClusterIP**（預設） | 叢集內部虛擬 IP + DNS（`svc.ns.svc.cluster.local`） |
@@ -93,14 +96,14 @@ flowchart TD
 > 需要**進階流量管理（權重分流、header 路由、多團隊共用 LB）** → **Gateway API**。
 > 傳統簡單 host/path 路由 → Ingress 就夠。
 
-### 設定與祕密
+#### 設定與祕密
 | 物件 | 用途 | 注意 |
 |---|---|---|
 | **ConfigMap** | 非敏感設定 | 以 env 注入 → **改了要重啟 Pod**；以 volume 掛載 → 檔案會自動更新（但程式要會重讀） |
 | **Secret** | 敏感資料 | 預設只是 **base64 編碼**，不是加密！etcd 加密另外設定 |
 | **Secret Manager + CSI driver** | 從 [[Secret Manager 與 Cloud KMS]] 同步 | **考試偏好這個**：集中管理、可輪替、有稽核 |
 
-### 命名空間與權限
+#### 命名空間與權限
 - **Namespace**：邏輯隔離 + 配額（ResourceQuota / LimitRange）邊界。
 - **兩層授權（必懂）**：
   1. **GCP IAM** 決定「你能不能呼叫這個叢集的 API」（如 `roles/container.developer`）
@@ -109,7 +112,7 @@ flowchart TD
 
 ---
 
-## 🔐 Workload Identity Federation for GKE（**必考**）
+### 🔐 Workload Identity Federation for GKE（**必考**）
 
 讓 Pod 用 **Kubernetes ServiceAccount (KSA)** 取得 **Google ServiceAccount (GSA)** 的權限，**不需要任何金鑰檔案**。
 
@@ -148,7 +151,7 @@ kubectl annotate serviceaccount app-ksa \
 
 ---
 
-## ⚙️ 常用操作
+### ⚙️ 常用操作
 
 ```bash
 # 建立 Autopilot 叢集（推薦的預設）
@@ -176,7 +179,7 @@ kubectl rollout undo deploy/api
 
 ---
 
-## 🧯 常見故障與診斷（實務 + 考題都愛）
+### 🧯 常見故障與診斷（實務 + 考題都愛）
 
 | 症狀 | 常見原因 | 怎麼查 |
 |---|---|---|
@@ -189,7 +192,10 @@ kubectl rollout undo deploy/api
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -206,7 +212,7 @@ kubectl rollout undo deploy/api
 
 ---
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **Autopilot 的限制清單沒讀**：第三方安全 agent（需特權 DaemonSet）裝不上去，專案做一半才發現。
 2. **把 Secret 當成加密**：K8s Secret 只是 base64。敏感資料走 [[Secret Manager 與 Cloud KMS]] + CSI driver。
@@ -215,7 +221,7 @@ kubectl rollout undo deploy/api
 5. **Ingress 的健康檢查與 readiness 不一致**：LB 認為後端不健康 → 502。GKE 會從 readinessProbe 推導健康檢查，路徑要能匿名存取。
 6. **叢集版本與 API 棄用**：升級 GKE 後 `extensions/v1beta1` 之類的舊 API 消失，manifest 失效。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Autopilot 與 Standard 的計費差異是什麼？各在什麼情況下更便宜？
 2. 列出三個「Autopilot 做不到、必須用 Standard」的需求。

@@ -22,7 +22,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 連線心智模型（PCD 的核心考點）
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 連線心智模型（PCD 的核心考點）
 
 ```mermaid
 flowchart TD
@@ -41,7 +44,7 @@ flowchart TD
     INST --- BK["備份 + PITR"]
 ```
 
-### 四種連線方式比較
+#### 四種連線方式比較
 | 方式 | 機制 | 優點 | 注意 |
 |---|---|---|---|
 | **Language Connector**（`cloud-sql-python-connector` 等） | 程式庫直接處理 TLS + IAM 授權 | 不需額外程序、支援 IAM 驗證 | 需要 `roles/cloudsql.client` |
@@ -54,7 +57,7 @@ flowchart TD
 > - 「不要在程式裡放資料庫密碼」→ **IAM database authentication**（用 SA 身分登入）或把密碼放 [[Secret Manager 與 Cloud KMS]]
 > - 「serverless IP 不固定，資料庫只允許白名單」→ 不要用授權網路，改私有連線
 
-### 連線數陷阱（**最高頻的 Section 4 考點**）
+#### 連線數陷阱（**最高頻的 Section 4 考點**）
 ```python
 # ✅ 全域建立一次，並限制池大小
 import sqlalchemy
@@ -77,7 +80,7 @@ engine = sqlalchemy.create_engine(
 
 ---
 
-## 🛡 高可用與備援（Cloud SQL）
+### 🛡 高可用與備援（Cloud SQL）
 
 | 機制 | 範圍 | 一致性 | 用途 |
 |---|---|---|---|
@@ -94,7 +97,7 @@ engine = sqlalchemy.create_engine(
 
 ---
 
-## 🚀 AlloyDB 要記什麼
+### 🚀 AlloyDB 要記什麼
 
 | 特性 | 說明 | 考點 |
 |---|---|---|
@@ -112,7 +115,7 @@ engine = sqlalchemy.create_engine(
 
 ---
 
-## ⚙️ 常用操作
+### ⚙️ 常用操作
 
 ```bash
 # 建立高可用的 PostgreSQL 執行個體（私有 IP）
@@ -141,7 +144,10 @@ gcloud run deploy api --add-cloudsql-instances $PROJECT:asia-east1:orders-db \
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -156,7 +162,7 @@ gcloud run deploy api --add-cloudsql-instances $PROJECT:asia-east1:orders-db \
 | `globally distributed relational with strong consistency` | **Spanner**（不是 Cloud SQL） |
 | `read-your-writes 必須成立` | 讀主庫，不要讀 replica |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **每個請求建一次連線**：TCP + TLS 握手成本高、連線數爆掉。用全域引擎 + 連線池。
 2. **把 read replica 當 HA**：zone 掛掉時 replica 不會自動接手。
@@ -165,7 +171,7 @@ gcloud run deploy api --add-cloudsql-instances $PROJECT:asia-east1:orders-db \
 5. **`db-f1-micro` 用在生產**：share-core 機型沒有 SLA。
 6. **schema migration 沒有版本控管**：用 Liquibase/Flyway 並放進 [[Cloud Build]] pipeline。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Cloud SQL 的 HA 與 read replica，在「複寫方式、failover、一致性、用途」四個維度的差異？
 2. Cloud Run 連 Cloud SQL 的四種方式，各自的優缺點？考試偏好哪個？

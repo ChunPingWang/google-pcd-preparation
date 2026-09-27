@@ -20,7 +20,10 @@ updated: 2026-09-27
 
 ---
 
-## 🩺 健康檢查：三種 probe
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🩺 健康檢查：三種 probe
 
 ```mermaid
 flowchart LR
@@ -41,11 +44,11 @@ flowchart LR
 | **readinessProbe** | 「你現在能收流量嗎？」 | 從 Service endpoints 移除，**不重啟** | 可以檢查下游依賴（DB 連不上就暫時不收流量） |
 | **livenessProbe** | 「你還活著嗎？」 | **重啟容器** | **不要**檢查下游依賴，否則下游故障會造成連鎖重啟 |
 
-### 三種檢查機制
+#### 三種檢查機制
 `httpGet`（最常用，2xx/3xx 算成功）、`tcpSocket`（能建立連線就算成功）、`exec`（指令 exit 0 算成功；成本最高）。
 gRPC 服務可用 `grpc` probe 或實作 gRPC Health Checking Protocol。
 
-### 關鍵參數 🔢
+#### 關鍵參數 🔢
 | 參數 | 預設 | 意義 |
 |---|---|---|
 | `initialDelaySeconds` | 0 | 容器啟動後等幾秒才開始探測 |
@@ -57,7 +60,7 @@ gRPC 服務可用 `grpc` probe 或實作 gRPC Health Checking Protocol。
 **最長容忍啟動時間** = `initialDelaySeconds + failureThreshold × periodSeconds`
 → 例：`failureThreshold: 30, periodSeconds: 10` = 容忍 **300 秒**啟動。
 
-### 正確範例
+#### 正確範例
 ```yaml
 spec:
   containers:
@@ -92,7 +95,7 @@ spec:
 
 ---
 
-## 📦 資源請求與限制（requests / limits）
+### 📦 資源請求與限制（requests / limits）
 
 | 欄位 | 意義 | 影響 |
 |---|---|---|
@@ -104,7 +107,7 @@ spec:
 > - **記憶體是不可壓縮資源**：超過 limit 直接被殺（`OOMKilled`）。
 > 考題：「Pod 間歇性被重啟，事件顯示 OOMKilled」→ 記憶體 limit 太低或有洩漏。
 
-### QoS 等級（決定資源不足時誰先被驅逐）
+#### QoS 等級（決定資源不足時誰先被驅逐）
 | 等級 | 條件 | 被驅逐順序 |
 |---|---|---|
 | **Guaranteed** | 每個容器的 requests == limits（CPU 與記憶體都設） | 最後 |
@@ -115,7 +118,7 @@ spec:
 
 ---
 
-## 📈 自動擴充四兄弟
+### 📈 自動擴充四兄弟
 
 ```mermaid
 flowchart TD
@@ -127,7 +130,7 @@ flowchart TD
     VPA["VPA<br/>調整單一 Pod 的 requests/limits"] -.->|"不要和 HPA 同時<br/>用同一個指標"| HPA
 ```
 
-### HPA（Horizontal Pod Autoscaler）— 考試重點
+#### HPA（Horizontal Pod Autoscaler）— 考試重點
 | 指標型別 | 來源 | 範例 |
 |---|---|---|
 | `Resource` | CPU / 記憶體 | CPU 平均使用率 70% |
@@ -165,21 +168,21 @@ spec:
 > 2. HPA 預設每 **15 秒** 🔢 評估一次（controller 的 `--horizontal-pod-autoscaler-sync-period`）。
 > 3. 多個指標並存時，**取需要最多副本的那個結果**。
 
-### VPA（Vertical Pod Autoscaler）
+#### VPA（Vertical Pod Autoscaler）
 自動調整 `requests`/`limits`。模式：`Off`（只給建議）、`Initial`（只在建立時套用）、`Auto`（會重建 Pod）。
 > **不要**對同一個 Deployment 用 HPA(CPU) + VPA(CPU)，兩者會互相打架。VPA 調記憶體 + HPA 調 CPU 是可接受的組合。
 
-### Cluster Autoscaler（CA）
+#### Cluster Autoscaler（CA）
 - 依**未排程的 Pod** 增加節點；節點長時間低使用率則移除。
 - 只在 **Standard** 需要手動設定；**Autopilot 內建**。
 - 節點縮減會受 **PodDisruptionBudget** 與 `local storage` / `hostPath` 的 Pod 阻擋。
 
-### Node Auto-Provisioning（NAP）
+#### Node Auto-Provisioning（NAP）
 CA 的加強版：當現有節點池的機型都不合（例如需要 GPU 或超大記憶體）時，**自動建立新的節點池**。
 
 ---
 
-## 🛡 可用性設計（常和擴充一起考）
+### 🛡 可用性設計（常和擴充一起考）
 
 | 機制 | 作用 |
 |---|---|
@@ -209,7 +212,10 @@ topologySpreadConstraints:
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -228,7 +234,7 @@ topologySpreadConstraints:
 
 ---
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **HPA 沒設 requests**：設了 HPA 卻完全不擴充，查了半天發現缺 `resources.requests.cpu`。
 2. **HPA 與 CronJob 尖峰打架**：批次工作吃滿 CPU → HPA 誤判擴充 web 服務。用不同節點池/namespace 隔離。
@@ -237,7 +243,7 @@ topologySpreadConstraints:
 5. **Spot 節點 + 沒有 PDB / 沒有多副本**：節點被回收就中斷。
 6. **liveness 的 `timeoutSeconds: 1`（預設）**：GC 暫停或瞬間高載就誤判為死亡 → 無意義重啟。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 三種 probe 各自失敗的後果是什麼？哪一種絕對不能檢查下游依賴，為什麼？
 2. 一個 Pod 啟動需要 3 分鐘，probe 該怎麼設？算式寫出來。

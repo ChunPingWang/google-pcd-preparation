@@ -19,7 +19,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart LR
@@ -38,7 +41,7 @@ flowchart LR
 
 ---
 
-## ⚖️ 兩種方式對照
+### ⚖️ 兩種方式對照
 
 | | **Direct VPC egress** ⭐ 較新 | **Serverless VPC Access connector** |
 |---|---|---|
@@ -64,7 +67,7 @@ gcloud compute networks vpc-access connectors create run-conn \
 gcloud run deploy api --vpc-connector=run-conn --vpc-egress=all-traffic
 ```
 
-### `--vpc-egress` 兩種值（考點）
+#### `--vpc-egress` 兩種值（考點）
 | 值 | 行為 |
 |---|---|
 | `private-ranges-only`（預設） | **只有 RFC 1918 私有位址**走 VPC；公網流量直接出去 |
@@ -76,7 +79,7 @@ gcloud run deploy api --vpc-connector=run-conn --vpc-egress=all-traffic
 
 ---
 
-## 🔒 私有存取 Google API 的方式
+### 🔒 私有存取 Google API 的方式
 
 | 機制 | 說明 | 用途 |
 |---|---|---|
@@ -93,7 +96,7 @@ gcloud run deploy api --vpc-connector=run-conn --vpc-egress=all-traffic
 
 ---
 
-## 🌐 相關 VPC 概念（開發者最小集合）
+### 🌐 相關 VPC 概念（開發者最小集合）
 
 | 概念 | 要記住的 |
 |---|---|
@@ -106,7 +109,10 @@ gcloud run deploy api --vpc-connector=run-conn --vpc-egress=all-traffic
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -120,7 +126,7 @@ gcloud run deploy api --vpc-connector=run-conn --vpc-egress=all-traffic
 | `stop data exfiltration across projects` | **VPC Service Controls** |
 | `restrict which service accounts a firewall rule applies to` | 防火牆的 **service account 目標** |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **忘記進 VPC 就連 Memorystore**：症狀是連線 timeout（不是權限錯誤），很難直覺定位。
 2. **子網 IP 不足**：Direct VPC egress 在大規模擴充時耗盡子網 IP → 規劃足夠大的子網。
@@ -129,7 +135,7 @@ gcloud run deploy api --vpc-connector=run-conn --vpc-egress=all-traffic
 5. **防火牆預設拒絕**：egress 到資料庫的 port 沒開。
 6. **以為 VPC 連線會加密**：VPC 內流量預設在 Google 網路內加密，但應用層仍應用 TLS。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Direct VPC egress 與 Serverless VPC Access connector 的四個差異？新設計選哪個？
 2. `private-ranges-only` 與 `all-traffic` 的差別？後者搭配什麼可得到固定出口 IP？

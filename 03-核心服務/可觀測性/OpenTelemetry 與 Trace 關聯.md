@@ -18,7 +18,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart LR
@@ -43,7 +46,7 @@ flowchart LR
 
 ---
 
-## 🔗 Trace 關聯的三個必要條件（**核心考點**）
+### 🔗 Trace 關聯的三個必要條件（**核心考點**）
 
 ```mermaid
 flowchart LR
@@ -63,7 +66,7 @@ flowchart LR
 > 很多人做了 trace 傳播，但 log 沒帶 trace ID → 在 Trace 裡看到慢的 span，卻無法一鍵跳到對應的 log。
 > **考題「如何用 trace ID 關聯跨服務的 log」的答案包含這三步。**
 
-### 非 HTTP 的傳播（容易忽略）
+#### 非 HTTP 的傳播（容易忽略）
 - **Pub/Sub**：把 trace context 放進**訊息屬性（attributes）**，消費端取出來續接。
 - **Cloud Tasks**：放進 HTTP header（Tasks 會原樣傳給目標）。
 - **佇列/批次**：至少把 trace ID 記在 log 裡，讓人能手動關聯。
@@ -85,7 +88,7 @@ with tracer.start_as_current_span("handle_message", context=ctx):
 
 ---
 
-## 🛠 實作：Python（自動 + 手動）
+### 🛠 實作：Python（自動 + 手動）
 
 ```bash
 pip install opentelemetry-distro opentelemetry-exporter-gcp-trace \
@@ -142,7 +145,7 @@ log("INFO", "order created", order_id="o-987")
 
 ---
 
-## 📦 OTel Collector
+### 📦 OTel Collector
 
 | 為什麼要用 | 說明 |
 |---|---|
@@ -170,7 +173,7 @@ service:
 
 ---
 
-## 🎲 取樣策略
+### 🎲 取樣策略
 
 | 策略 | 說明 |
 |---|---|
@@ -182,7 +185,10 @@ service:
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -196,7 +202,7 @@ service:
 | `metrics 與 traces 用同一套 SDK` | OpenTelemetry |
 | `Cloud Run 要跑 collector` | **sidecar 容器**（Cloud Run 支援多容器） |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **trace 斷裂**：某個服務沒傳 header（常見於自己手刻的 HTTP client 或訊息佇列）。
 2. **log 沒帶 trace ID**：有 trace 也無法關聯 log。
@@ -206,7 +212,7 @@ service:
 6. **PII 進 span 屬性**：telemetry 資料通常權限較寬鬆 → 要遮罩。
 7. **同時裝多套 SDK**（OTel + 舊的 Stackdriver SDK）：span 重複或衝突。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. OTel 的三種訊號？哪一種不能放高基數資料？
 2. Trace 關聯的三個必要條件？只做前兩個會少什麼能力？

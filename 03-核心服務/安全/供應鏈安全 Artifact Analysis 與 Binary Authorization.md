@@ -23,7 +23,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 完整供應鏈心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 完整供應鏈心智模型
 
 ```mermaid
 flowchart LR
@@ -41,7 +44,7 @@ flowchart LR
 
 ---
 
-## 🔍 Artifact Analysis（原 Container Analysis）
+### 🔍 Artifact Analysis（原 Container Analysis）
 
 | 功能 | 說明 |
 |---|---|
@@ -64,7 +67,7 @@ gcloud artifacts docker images describe IMAGE --show-package-vulnerability \
   --format="value(package_vulnerability_summary)"
 ```
 
-### 漏洞回應流程（**考題會問「你的處理順序」**）
+#### 漏洞回應流程（**考題會問「你的處理順序」**）
 1. **分級**：看嚴重度（CRITICAL/HIGH）+ **是否可利用**（有沒有實際暴露路徑）。
 2. **定位來源**：是基底映像（base image）還是應用依賴？
 3. **修復**：
@@ -79,11 +82,11 @@ gcloud artifacts docker images describe IMAGE --show-package-vulnerability \
 
 ---
 
-## 🛂 Binary Authorization
+### 🛂 Binary Authorization
 
 **定位**：部署時的**准入控制（admission control）**。它問一個問題：「這個映像有沒有我要求的簽章？」
 
-### 核心概念
+#### 核心概念
 | 概念 | 說明 |
 |---|---|
 | **Policy（政策）** | 定義規則：預設規則 + 依叢集/命名空間的例外規則 |
@@ -134,7 +137,7 @@ gcloud run deploy api --image ...@sha256:$DIGEST --binary-authorization=default
 > `:latest` 這種可變 tag 無法保證內容 → 部署必須用 `@sha256:...`。
 > 這是很常考的細節：「為什麼 Binary Auth 要求用 digest 部署？」→ tag 可被重新指向，digest 不可變。
 
-### 多階段簽章（真實流程）
+#### 多階段簽章（真實流程）
 ```mermaid
 flowchart LR
     B["Cloud Build 建置成功"] -->|"簽 build-attestor"| A1["attestation #1"]
@@ -147,7 +150,7 @@ flowchart LR
 
 ---
 
-## 🧱 其他供應鏈最佳實務（考試會零散出現）
+### 🧱 其他供應鏈最佳實務（考試會零散出現）
 
 | 實務 | 說明 |
 |---|---|
@@ -176,7 +179,10 @@ ENTRYPOINT ["/server"]
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -191,7 +197,7 @@ ENTRYPOINT ["/server"]
 | `centrally see all vulnerability findings` | **Security Command Center** |
 | `為什麼不能用 :latest 部署` | Binary Auth 需要**不可變的 digest** |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **直接開 ENFORCED 模式**：所有既有部署被擋，生產事故。一定先 dry-run。
 2. **用 tag 部署**：Binary Auth 無法驗證，部署被拒。
@@ -200,7 +206,7 @@ ENTRYPOINT ["/server"]
 5. **忘記系統映像 allowlist**：GKE 的系統 Pod（如 kube-proxy）被政策擋住，叢集異常。
 6. **簽章金鑰權限太鬆**：任何人都能簽 → 整個機制失效。簽章金鑰只能給 CI 的 SA。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 從 commit 到生產部署，供應鏈上有哪些安全關卡？各由什麼服務負責？
 2. Attestor 與 attestation 的關係？金鑰放在哪裡？誰該有簽章權限？

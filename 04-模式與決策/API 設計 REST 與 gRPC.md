@@ -18,7 +18,10 @@ updated: 2026-09-27
 
 ---
 
-## ⚖️ REST vs gRPC（**核心對照**）
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### ⚖️ REST vs gRPC（**核心對照**）
 
 | 維度 | **REST / JSON** | **gRPC** |
 |---|---|---|
@@ -43,7 +46,7 @@ updated: 2026-09-27
 
 ---
 
-## 📐 Google API 設計慣例（**資源導向**）
+### 📐 Google API 設計慣例（**資源導向**）
 
 官方《API Design Guide》的核心：**API 是一組資源 + 標準方法**。
 
@@ -65,7 +68,7 @@ updated: 2026-09-27
 - 階層表達歸屬關係。
 - 欄位用 `snake_case`（proto）或 `camelCase`（JSON），保持一致。
 
-### 分頁（必考）
+#### 分頁（必考）
 ```
 GET /v1/orders?page_size=50&page_token=abc123
 → { "orders": [...], "next_page_token": "def456" }
@@ -73,7 +76,7 @@ GET /v1/orders?page_size=50&page_token=abc123
 > **用 token（cursor）分頁，不要用 offset**：offset 在大資料集上效率差且資料變動時會漏/重複。
 > 相關：[[Cloud API 呼叫最佳實務]]
 
-### 部分更新與欄位遮罩
+#### 部分更新與欄位遮罩
 ```
 PATCH /v1/orders/123?update_mask=status,note
 { "status": "SHIPPED", "note": "expedited" }
@@ -81,7 +84,7 @@ PATCH /v1/orders/123?update_mask=status,note
 > `update_mask` 明確指出「只改這些欄位」→ 避免把沒傳的欄位清空。
 > 讀取端的對應是 `fields` / `FieldMask`（只回傳需要的欄位，省頻寬）。
 
-### 長時間執行的操作（LRO）
+#### 長時間執行的操作（LRO）
 ```
 POST /v1/exports  →  202 { "name": "operations/abc", "done": false }
 GET /v1/operations/abc  →  { "done": true, "response": {...} }
@@ -89,7 +92,7 @@ GET /v1/operations/abc  →  { "done": true, "response": {...} }
 > 超過幾秒的操作**不要同步等待**。回一個 operation，讓客戶端輪詢或用 webhook/Pub/Sub 通知。
 > 相關：[[Cloud Tasks]]、[[Workflows 與 Cloud Scheduler]]
 
-### 錯誤回應
+#### 錯誤回應
 用標準錯誤碼 + 結構化錯誤內容：
 ```json
 {
@@ -105,7 +108,7 @@ GET /v1/operations/abc  →  { "done": true, "response": {...} }
 
 ---
 
-## 🔢 版本化與相容性（**Section 3.1 考點**）
+### 🔢 版本化與相容性（**Section 3.1 考點**）
 
 | 做法 | 範例 | 評價 |
 |---|---|---|
@@ -113,7 +116,7 @@ GET /v1/operations/abc  →  { "done": true, "response": {...} }
 | Header 版本 | `Accept: application/vnd.api.v2+json` | 乾淨但對使用者不友善 |
 | 查詢參數 | `?version=2` | 不建議 |
 
-### 向後相容的變更規則
+#### 向後相容的變更規則
 | ✅ 可以（不破壞相容） | ❌ 不可以（破壞相容） |
 |---|---|
 | 新增**可選**欄位 | 刪除或重新命名欄位 |
@@ -133,7 +136,7 @@ GET /v1/operations/abc  →  { "done": true, "response": {...} }
 
 ---
 
-## 🔐 保護 API
+### 🔐 保護 API
 
 | 需求 | 機制 |
 |---|---|
@@ -150,7 +153,7 @@ GET /v1/operations/abc  →  { "done": true, "response": {...} }
 
 ---
 
-## 🧱 其他實務要點
+### 🧱 其他實務要點
 
 | 要點 | 說明 |
 |---|---|
@@ -164,7 +167,10 @@ GET /v1/operations/abc  →  { "done": true, "response": {...} }
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -181,7 +187,7 @@ GET /v1/operations/abc  →  { "done": true, "response": {...} }
 | `reduce response payload size` | `fields` 欄位遮罩 + 分頁 + gzip |
 | `gRPC 在 GKE 負載不均` | gRPC 長連線 → 需要 L7 LB / **Service Mesh** |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **offset 分頁**：資料量大時效能崩壞、資料變動會漏筆。
 2. **`PUT` 當部分更新**：沒傳的欄位被清空。用 `PATCH + update_mask`。
@@ -191,7 +197,7 @@ GET /v1/operations/abc  →  { "done": true, "response": {...} }
 6. **gRPC 走 L4 LB**：連線建立後就固定，負載不均。
 7. **API key 當驗證**：可被複製盜用。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. REST 與 gRPC 的六個維度差異？各在什麼情境選哪個？
 2. Google 的資源導向設計中，標準方法有哪五個？自訂方法怎麼命名？

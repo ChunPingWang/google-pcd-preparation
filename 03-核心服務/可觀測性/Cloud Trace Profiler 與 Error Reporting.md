@@ -21,7 +21,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧭 什麼時候用哪一個
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧭 什麼時候用哪一個
 
 ```mermaid
 flowchart TD
@@ -38,7 +41,7 @@ flowchart TD
 
 ---
 
-## 🔬 Cloud Trace
+### 🔬 Cloud Trace
 
 | 概念 | 說明 |
 |---|---|
@@ -78,7 +81,7 @@ def create_order(payload):
 
 ---
 
-## 🔥 Cloud Profiler
+### 🔥 Cloud Profiler
 
 **定位**：**低開銷的持續性效能剖析**，可以在**生產環境**長期開著。
 
@@ -113,7 +116,7 @@ func main() {
 
 ---
 
-## 🚨 Error Reporting
+### 🚨 Error Reporting
 
 **定位**：把**相同的例外聚合成一個 issue**，顯示發生次數、趨勢、首次/最後出現時間，並可通知。
 
@@ -148,7 +151,7 @@ def report_exception(e, trace_id=None):
 
 ---
 
-## 🧩 三者 + Logging 的協作（**整合考點**）
+### 🧩 三者 + Logging 的協作（**整合考點**）
 
 ```mermaid
 flowchart LR
@@ -165,7 +168,10 @@ flowchart LR
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -180,7 +186,7 @@ flowchart LR
 | `see all logs for one specific request` | Logging 用 **trace=** 查詢 |
 | `standard instrumentation across languages` | **OpenTelemetry** |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **沒傳 trace context**：trace 斷裂，看不到跨服務鏈路。
 2. **100% 取樣**：成本與效能負擔。用合理取樣率（錯誤路徑可提高取樣）。
@@ -190,7 +196,7 @@ flowchart LR
 6. **忘了給權限**：`cloudtrace.agent` / `cloudprofiler.agent` / `logging.logWriter`。
 7. **只有工具沒有流程**：警示來了沒人知道要先看哪個工具 → 寫進 runbook。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Trace / Profiler / Error Reporting 各回答什麼問題？
 2. 要讓跨四個服務的 trace 完整串起來，你的程式碼要做什麼？

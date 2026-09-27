@@ -24,7 +24,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧪 本地模擬器（Emulators）— **最高頻考點**
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧪 本地模擬器（Emulators）— **最高頻考點**
 
 ```bash
 # Firestore
@@ -70,7 +73,7 @@ gcloud emulators datastore start
 
 ---
 
-## 🖥 四種開發環境
+### 🖥 四種開發環境
 
 | | **Cloud Shell** | **Cloud Workstations** | **Cloud Code** | 本機 + gcloud |
 |---|---|---|---|---|
@@ -80,14 +83,14 @@ gcloud emulators datastore start
 | 適合 | **快速一次性操作**、上課、考試練習 | **團隊統一環境**、需要存取私有資源、合規（程式碼不落地） | 在 IDE 內部署/除錯 Cloud Run 與 GKE | 日常開發 |
 | 成本 | 免費（有配額） | 依 VM 計費 | 免費 | — |
 
-### Cloud Code 能做什麼（Section 2.1 直接考）
+#### Cloud Code 能做什麼（Section 2.1 直接考）
 - 一鍵部署到 **Cloud Run / GKE**，並在 IDE 內看 log。
 - **本機開發迴圈**：改程式碼 → 自動重建 → 自動部署到 minikube/遠端叢集（底層用 **Skaffold**）。
 - **遠端除錯**：在 Cloud Run / GKE 上的容器設中斷點。
 - YAML 驗證與自動完成（Kubernetes、`cloudbuild.yaml`、`skaffold.yaml`）。
 - 內建 **Gemini Code Assist**。
 
-### Cloud Workstations 的三個賣點（考題關鍵詞）
+#### Cloud Workstations 的三個賣點（考題關鍵詞）
 1. **安全**：程式碼不落在個人筆電；可在 VPC 內、受 VPC-SC 保護、強制 IAM。
 2. **一致**：團隊用同一個容器映像，「在我電腦上可以跑」的問題消失。
 3. **可及性**：可存取**私有 GKE / 私有資料庫**，不需要 VPN。
@@ -96,7 +99,7 @@ gcloud emulators datastore start
 
 ---
 
-## 🤖 AI 輔助開發（2026 新增考點）
+### 🤖 AI 輔助開發（2026 新增考點）
 
 | 工具 | 定位 | 能做什麼 |
 |---|---|---|
@@ -106,14 +109,14 @@ gcloud emulators datastore start
 | **MCP server**（Model Context Protocol） | 讓 AI 助理**安全地取得外部上下文與工具** | 把你的 API/資料庫/文件接給 AI 助理使用 |
 | **Context engineering** | 提供正確上下文的方法 | 給模型專案規範、既有程式碼樣式、API 契約，讓產出可用 |
 
-### 官方明文考點：「**借助 AI coding assistant 撰寫單元測試**」
+#### 官方明文考點：「**借助 AI coding assistant 撰寫單元測試**」
 實務要點（也是考試想要的觀念）：
 1. 讓助理讀懂**既有測試風格**再產生新測試（context engineering）。
 2. 重點放在**邊界條件與錯誤路徑** — 這是人最容易漏的。
 3. **產出必須人工審查**：AI 可能產生「看起來通過但沒真的驗證」的測試（例如 assert 太寬鬆）。
 4. 測試覆蓋率不等於測試品質。
 
-### 「AI 輔助的可觀測性」（Section 4.3 考點）
+#### 「AI 輔助的可觀測性」（Section 4.3 考點）
 用 **Gemini Cloud Assist** 在 Logging / Monitoring / Error Reporting 裡：
 - 摘要一段錯誤 log 的可能根因
 - 由自然語言產生 log 查詢或 MQL/PromQL
@@ -122,7 +125,7 @@ gcloud emulators datastore start
 
 ---
 
-## 🧰 gcloud CLI 的開發者必備設定
+### 🧰 gcloud CLI 的開發者必備設定
 
 ```bash
 # 多環境切換：用 configuration
@@ -148,7 +151,10 @@ gcloud projects list --format=json | jq '.[].projectId'
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -165,7 +171,7 @@ gcloud projects list --format=json | jq '.[].projectId'
 | `give the AI assistant access to our internal tools` | **MCP server** |
 | `switch between dev/prod projects easily` | `gcloud config configurations` |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **忘記 unset emulator 環境變數**：在本機「測試通過」其實全是打模擬器；或反過來，正式程式意外連到模擬器。
 2. **以為 emulator 行為 100% 等於雲端**：模擬器不驗證 IAM、索引行為/配額/延遲都不同 → **關鍵路徑仍要在真實環境測**。
@@ -174,7 +180,7 @@ gcloud projects list --format=json | jq '.[].projectId'
 5. **AI 產生的測試沒人審**：assert 空泛、mock 過度，覆蓋率高但無效。
 6. **AI 產生的程式碼含過時 API**：要對照官方文件驗證（尤其 GCP 的服務名稱與參數常改）。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 哪些 Google Cloud 服務有官方 emulator？哪兩個重要服務沒有？沒有的怎麼測？
 2. 設定 emulator 後，程式碼需要修改嗎？為什麼？

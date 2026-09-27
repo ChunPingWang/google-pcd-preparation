@@ -19,7 +19,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart TD
@@ -39,7 +42,7 @@ flowchart TD
 
 ---
 
-## 🔀 Native mode vs Datastore mode
+### 🔀 Native mode vs Datastore mode
 
 | | **Native mode** ⭐ | **Datastore mode** |
 |---|---|---|
@@ -52,7 +55,7 @@ flowchart TD
 
 ---
 
-## 🔍 查詢模型（最重要的限制）
+### 🔍 查詢模型（最重要的限制）
 
 | 能做 | 不能做 |
 |---|---|
@@ -65,12 +68,12 @@ flowchart TD
 > **查詢效能與結果集大小成正比，與資料總量無關。** 回 10 筆就是 10 筆的成本，不管集合裡有 10 億筆。
 > 代價：**你不能做任意查詢** → 必須為查詢**預先設計資料結構與索引**（denormalize、寫入時就算好）。
 
-### 索引
+#### 索引
 - **單一欄位索引**：自動建立（可用 exemption 關閉，省寫入成本）。
 - **複合索引**：多欄位排序/過濾時需要。**忘記建 → 查詢直接報錯並附上建立連結**（這是考題常見的錯誤情境）。
 - 索引越多 → **寫入越慢、成本越高**。大型陣列欄位要考慮 exemption。
 
-### Collection group query
+#### Collection group query
 ```javascript
 // 查所有使用者底下的 orders（不管在哪個 user 之下）
 const snap = await db.collectionGroup("orders")
@@ -80,7 +83,7 @@ const snap = await db.collectionGroup("orders")
 
 ---
 
-## 🔐 交易與一致性
+### 🔐 交易與一致性
 
 | 機制 | 說明 |
 |---|---|
@@ -110,7 +113,7 @@ await db.doc(`processedEvents/${eventId}`).create({ at: FieldValue.serverTimesta
 
 ---
 
-## 🔢 關鍵限制（查核日 2026-09-27，以官方為準）
+### 🔢 關鍵限制（查核日 2026-09-27，以官方為準）
 
 | 項目 | 值 |
 |---|---|
@@ -126,7 +129,7 @@ await db.doc(`processedEvents/${eventId}`).create({ at: FieldValue.serverTimesta
 > **解法：distributed counter（分片計數器）** — 建 N 個 shard 文件，隨機寫其中一個，讀取時把 N 個加總。
 > 這是 Firestore 最常考的設計題。
 
-### Schema 設計原則
+#### Schema 設計原則
 | 原則 | 說明 |
 |---|---|
 | **為查詢設計，不為正規化設計** | 需要一起顯示的資料就放一起（denormalize） |
@@ -138,7 +141,7 @@ await db.doc(`processedEvents/${eventId}`).create({ at: FieldValue.serverTimesta
 
 ---
 
-## 🛡 Security Rules（Native mode，客戶端直連時）
+### 🛡 Security Rules（Native mode，客戶端直連時）
 
 ```javascript
 rules_version = '2';
@@ -168,7 +171,7 @@ service cloud.firestore {
 
 ---
 
-## ⚙️ 常用操作
+### ⚙️ 常用操作
 
 ```bash
 gcloud firestore databases create --location=asia-east1 --type=firestore-native
@@ -184,7 +187,10 @@ export FIRESTORE_EMULATOR_HOST=localhost:8080
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -199,7 +205,7 @@ export FIRESTORE_EMULATOR_HOST=localhost:8080
 | `需要跨大量文件的報表分析` | 匯出到 **BigQuery**（Firestore→BQ 匯出/擴充功能） |
 | `exactly-once 處理事件` | 用 event ID 當文件 ID + `create()` |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **N+1 查詢**：迴圈裡逐一 `get()`。改用 `in` 查詢或 denormalize。
 2. **索引爆炸**：對每個欄位都建索引 → 寫入成本翻倍。用單欄位索引 exemption。
@@ -208,7 +214,7 @@ export FIRESTORE_EMULATOR_HOST=localhost:8080
 5. **把 Firestore 當資料倉儲**：報表查詢應該去 [[BigQuery 給開發者]]。
 6. **忘記伺服器端 SDK 繞過 rules**：以為 rules 就是全部的安全防線。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Native mode 與 Datastore mode 的差別？新專案該選哪個？可以改嗎？
 2. 單一文件的寫入速率上限是多少？全站計數器該怎麼設計？

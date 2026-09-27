@@ -22,9 +22,12 @@ updated: 2026-09-27
 
 ---
 
-## 🚪 Identity-Aware Proxy (IAP)
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
 
-### 心智模型
+### 🚪 Identity-Aware Proxy (IAP)
+
+#### 心智模型
 ```mermaid
 flowchart LR
     U["使用者 (瀏覽器)"] --> LB["Cloud Load Balancer"]
@@ -51,7 +54,7 @@ gcloud iap web add-iam-policy-binding \
 gcloud run services update internal-admin --ingress=internal-and-cloud-load-balancing
 ```
 
-### IAP 的使用場景
+#### IAP 的使用場景
 | 場景 | 說明 |
 |---|---|
 | **內部管理後台** | 員工用 Google 帳號登入，不需要 VPN → **BeyondCorp / 零信任** 的核心 |
@@ -65,7 +68,7 @@ gcloud run services update internal-admin --ingress=internal-and-cloud-load-bala
 
 ---
 
-## 👥 Identity Platform / Firebase Authentication
+### 👥 Identity Platform / Firebase Authentication
 
 **定位**：你的應用的**終端使用者**身分系統（CIAM）。
 
@@ -108,7 +111,7 @@ def get_uid(authorization_header: str) -> str:
 
 ---
 
-## 🔎 Web Security Scanner
+### 🔎 Web Security Scanner
 
 **定位**：自動爬你的 Web 應用，測試常見漏洞。
 
@@ -125,7 +128,7 @@ def get_uid(authorization_header: str) -> str:
 
 ---
 
-## 🛡 Security Command Center（SCC）
+### 🛡 Security Command Center（SCC）
 
 **定位**：安全態勢的集中檢視 — 把各種偵測結果匯總成 **findings**。
 
@@ -141,7 +144,10 @@ def get_uid(authorization_header: str) -> str:
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -156,7 +162,7 @@ def get_uid(authorization_header: str) -> str:
 | `public bucket / over-permissive IAM 被發現` | SCC **Security Health Analytics** |
 | 掃描可能破壞資料 | 在 **staging** 掃 / 排除 URL |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **只讀 IAP 的 email header 不驗 JWT**：後端若能被繞過就等於無驗證。
 2. **IAP 開了但後端仍公開**：直接打後端 URL 就繞過 IAP。要鎖 ingress。
@@ -165,7 +171,7 @@ def get_uid(authorization_header: str) -> str:
 5. **前端驗證 JWT 就當安全**：所有授權判斷必須在後端做。
 6. **忽略 SCC findings**：考試強調「要有回應流程」，不只是偵測。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. IAP 解決什麼問題？它注入哪些 header？為什麼一定要驗證 JWT assertion？
 2. 「IAP 保護的 Cloud Run」要怎麼設定 ingress 才不會被繞過？

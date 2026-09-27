@@ -18,7 +18,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart LR
@@ -37,7 +40,7 @@ flowchart LR
 
 ---
 
-## 📐 四個黃金訊號（**該監控什麼的標準答案**）
+### 📐 四個黃金訊號（**該監控什麼的標準答案**）
 
 | 訊號 | 對應指標 | 為什麼重要 |
 |---|---|---|
@@ -53,7 +56,7 @@ flowchart LR
 
 ---
 
-## 🎯 SLI / SLO / Error Budget（**高分關鍵**）
+### 🎯 SLI / SLO / Error Budget（**高分關鍵**）
 
 | 術語 | 定義 | 例子 |
 |---|---|---|
@@ -76,7 +79,7 @@ flowchart LR
 > 它把「要穩定」與「要快速發布」的矛盾**量化成一個可協商的數字**：
 > 預算還有 → 可以繼續冒險發布；預算燒光 → 停下來修穩定性。
 
-### 多視窗 burn-rate 警示（業界最佳實務）
+#### 多視窗 burn-rate 警示（業界最佳實務）
 | 警示 | 條件 | 意義 |
 |---|---|---|
 | **快速燒**（page 人） | 1 小時 burn rate > 14.4x **且** 5 分鐘也超過 | 嚴重事故，立刻處理 |
@@ -94,7 +97,7 @@ gcloud monitoring dashboards list
 
 ---
 
-## 🔔 Alerting Policy
+### 🔔 Alerting Policy
 
 | 元素 | 說明 |
 |---|---|
@@ -129,7 +132,7 @@ documentation:
   content: "Runbook: https://wiki/runbooks/api-5xx"
 ```
 
-### Uptime Check
+#### Uptime Check
 從**全球多個位置**定期打你的端點。
 - 可檢查 HTTP(S)/TCP，驗證回應內容、狀態碼、SSL 憑證有效期。
 - 失敗會觸發警示；**多位置**避免單一探測點的網路問題造成誤報。
@@ -137,7 +140,7 @@ documentation:
 
 ---
 
-## 📈 自訂指標
+### 📈 自訂指標
 
 三種送法：
 | 方式 | 說明 | 建議 |
@@ -169,13 +172,16 @@ orders_counter.add(1, {"tier": "vip", "region": "asia-east1"})   # ⚠️ 標籤
 
 ---
 
-## 🤖 AI 輔助的可觀測性（2026 新增考點）
+### 🤖 AI 輔助的可觀測性（2026 新增考點）
 **Gemini Cloud Assist** 可以：解釋警示、推測根因、由自然語言產生查詢、建議調查步驟。
 > 定位：**加速診斷**。它不取代 SLO 設計與正確的 instrumentation。見 [[開發環境 Cloud Code Shell Workstations 與 AI 工具]]。
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -191,7 +197,7 @@ orders_counter.add(1, {"tier": "vip", "region": "asia-east1"})   # ⚠️ 標籤
 | `too many time series / costs rising` | 指標**基數**過高 → 移除高基數標籤 |
 | `SLA vs SLO` | SLA 是**對外合約**，SLO 是**內部目標**（通常更嚴） |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **只警示 CPU**：CPU 正常但使用者拿 500。要警示**症狀**。
 2. **門檻式警示太吵**：一天 50 個警示 → 大家都關通知。改用 burn rate。
@@ -201,7 +207,7 @@ orders_counter.add(1, {"tier": "vip", "region": "asia-east1"})   # ⚠️ 標籤
 6. **忘記工作負載的 metric 權限**：SA 缺 `roles/monitoring.metricWriter` → 自訂指標送不出去。
 7. **uptime check 打到需要驗證的路徑**：永遠失敗。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 四個黃金訊號是什麼？為什麼不該只監控 CPU？
 2. SLI / SLO / SLA / error budget 的定義與關係？99.9% / 30 天 的預算約多少分鐘？

@@ -18,7 +18,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 核心概念
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 核心概念
 
 ```mermaid
 flowchart LR
@@ -44,7 +47,7 @@ flowchart LR
 
 ---
 
-## ⚙️ 常用操作
+### ⚙️ 常用操作
 
 ```bash
 # 建立 Docker 倉庫
@@ -96,7 +99,7 @@ gcloud artifacts repositories update apps --location=asia-east1 --immutable-tags
 
 ---
 
-## 🔐 權限與安全
+### 🔐 權限與安全
 
 | 角色 | 用於 |
 |---|---|
@@ -116,7 +119,10 @@ gcloud artifacts repositories update apps --location=asia-east1 --immutable-tags
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -131,7 +137,7 @@ gcloud artifacts repositories update apps --location=asia-east1 --immutable-tags
 | `GKE 拉不到映像` | 節點 SA 缺 **`artifactregistry.reader`** |
 | `多 region 部署要降低拉取延遲` | 各 region 建 repo，或用 multi-region repo |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **repo 與叢集不同 region**：拉映像慢且有跨區費用。
 2. **只用 `:latest`**：無法追溯、rollback 困難、Binary Auth 不接受。
@@ -140,7 +146,7 @@ gcloud artifacts repositories update apps --location=asia-east1 --immutable-tags
 5. **仍在用 `gcr.io`**：Container Registry 已被取代，遷移到 Artifact Registry。
 6. **把敏感資料烤進映像**（`.env`、金鑰檔）：映像是可被 pull 的產出物。祕密走 [[Secret Manager 與 Cloud KMS]]。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Standard / Remote / Virtual 三種 mode 各解決什麼問題？
 2. GKE `ImagePullBackOff` 最常見的權限原因？該補什麼角色給誰？

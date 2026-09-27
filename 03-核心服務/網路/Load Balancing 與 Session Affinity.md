@@ -18,7 +18,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 LB 家族心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 LB 家族心智模型
 
 ```mermaid
 flowchart TD
@@ -42,7 +45,7 @@ flowchart TD
 | Proxy Network LB（TCP/SSL proxy） | L4 | 全球 | 全球 TCP/TLS 終結 |
 | Internal passthrough Network LB | L4 | VPC 內 | 內部 TCP/UDP（GKE `Service: LoadBalancer` 的內部版本） |
 
-### 組成元件（考題常問「要設定什麼」）
+#### 組成元件（考題常問「要設定什麼」）
 ```
 轉送規則 (Forwarding Rule) → 目標代理 (Target Proxy) → URL Map → 後端服務 (Backend Service) → 後端 (Backend)
                                                                          ↓
@@ -71,7 +74,7 @@ gcloud compute backend-services add-backend api-backend --global \
 
 ---
 
-## 🔗 Session Affinity（黏著度）
+### 🔗 Session Affinity（黏著度）
 
 **定義**：讓「同一個用戶端的請求」盡可能落到**同一個後端實例**。
 
@@ -103,7 +106,7 @@ gcloud compute backend-services update api-backend --global \
 
 ---
 
-## 🚀 Cloud CDN
+### 🚀 Cloud CDN
 
 | 特性 | 說明 |
 |---|---|
@@ -123,7 +126,7 @@ gcloud compute url-maps invalidate-cdn-cache api-lb --path="/static/*"
 
 ---
 
-## 🛡 Cloud Armor
+### 🛡 Cloud Armor
 
 | 能力 | 說明 |
 |---|---|
@@ -153,7 +156,7 @@ gcloud compute backend-services update api-backend --global --security-policy=ap
 
 ---
 
-## 🩺 健康檢查（很常被忽略的考點）
+### 🩺 健康檢查（很常被忽略的考點）
 
 - LB 依健康檢查決定後端是否可用；**失敗的後端不會收到流量**。
 - GKE 的 Ingress/Gateway 會**從 `readinessProbe` 推導**健康檢查 → 兩者不一致就會 502。
@@ -162,7 +165,10 @@ gcloud compute backend-services update api-backend --global --security-policy=ap
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -179,7 +185,7 @@ gcloud compute backend-services update api-backend --global --security-policy=ap
 | `502 after deploying to GKE` | 健康檢查 / readinessProbe 不一致 |
 | `terminate TLS with a managed certificate` | Google-managed SSL certificate on target proxy |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **用 affinity 當 session 儲存**：縮容時使用者被登出。
 2. **CDN 快取了私有內容**：`FORCE_CACHE_ALL` + 帶個人資料的回應 = 資料外洩。用 `Cache-Control: private` 與 signed URL。
@@ -189,7 +195,7 @@ gcloud compute backend-services update api-backend --global --security-policy=ap
 6. **忘記 Cloud Armor 只能配 L7/proxy LB**：passthrough L4 不支援。
 7. **Cloud CDN 失效以為即時**：invalidation 需要一點時間傳播；更好的做法是**檔名帶版本雜湊**。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 把 Cloud Run 掛到全球 ALB 需要什麼後端型態？之後還要改 Cloud Run 的什麼設定？
 2. Session affinity 的正當用途是什麼？為什麼不該用來存 session？四個代價？

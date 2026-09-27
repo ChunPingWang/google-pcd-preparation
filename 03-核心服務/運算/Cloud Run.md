@@ -20,7 +20,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart TD
@@ -47,7 +50,7 @@ flowchart TD
 
 ---
 
-## 📜 容器契約（Container Contract）
+### 📜 容器契約（Container Contract）
 
 你的容器必須遵守這幾條，否則部署會失敗：
 
@@ -79,9 +82,9 @@ if __name__ == "__main__":
 
 ---
 
-## 🔑 核心概念
+### 🔑 核心概念
 
-### 1. 並行（Concurrency）— 最常考的設定
+#### 1. 並行（Concurrency）— 最常考的設定
 Cloud Run **一個實例可以同時處理多個請求**（這是它和傳統 FaaS 最大的差別）。
 
 | 設定 | 行為 | 何時用 |
@@ -93,13 +96,13 @@ Cloud Run **一個實例可以同時處理多個請求**（這是它和傳統 Fa
 > [!warning] 陷阱
 > 並行度高 → 單一實例的記憶體/CPU 被多個請求瓜分。看到 `OOM`（記憶體不足被殺）先想：**降低 concurrency 或提高記憶體**。
 
-### 2. 自動擴充
+#### 2. 自動擴充
 - 依**進行中的請求數 ÷ concurrency** 決定實例數，也會看 CPU 使用率。
 - `--min-instances=N`：保留暖實例 → **消除冷啟動**，代價是持續計費（idle 時較便宜但不免費）。
 - `--max-instances=N`：上限，用來**保護下游**（例如資料庫連線數）。預設值 🔢 不高，流量大時要調。
 - **縮到 0**：沒流量時實例歸零、不計費 → 但下一個請求會冷啟動。
 
-### 3. CPU 配置（CPU allocation）
+#### 3. CPU 配置（CPU allocation）
 | 模式 | 行為 | 用途 |
 |---|---|---|
 | **僅請求期間**（`--cpu-throttling`，預設） | 沒處理請求時 CPU 被節流到近乎 0 | 一般 HTTP 服務，最省錢 |
@@ -108,17 +111,17 @@ Cloud Run **一個實例可以同時處理多個請求**（這是它和傳統 Fa
 > [!tip] 考點
 > 「回應已送出，但還要繼續寫入資料庫 / 呼叫下游」→ 需要 **CPU always allocated**（或改用 [[Cloud Tasks]] 把工作丟出去，這通常是更 Google 的答案）。
 
-### 4. 執行環境
+#### 4. 執行環境
 - **第一代（gen1）**：啟動快、系統呼叫支援較少。
 - **第二代（gen2）**：完整 Linux 相容（支援網路檔案系統掛載、部分系統呼叫），啟動略慢、CPU 效能較好。
 - 需要掛 **Cloud Storage FUSE / NFS volume** 或特殊系統呼叫 → gen2。
 
-### 5. 服務身分（Service Identity）
+#### 5. 服務身分（Service Identity）
 - 每個 revision 以一個**服務帳戶**執行；不指定就用 **default compute service account**（權限過大 → 考試裡永遠是錯選項）。
 - 服務內用 ADC 自動取得該 SA 的 token，見 [[驗證與授權 ADC OAuth JWT]]。
 - `--service-account=my-svc-sa@PROJECT.iam.gserviceaccount.com`
 
-### 6. 存取控制（誰能呼叫）
+#### 6. 存取控制（誰能呼叫）
 | 設定 | 效果 |
 |---|---|
 | `--allow-unauthenticated` | 公開（等於給 `allUsers` 加 `roles/run.invoker`） |
@@ -144,7 +147,7 @@ def call_b():
 > 呼叫 **Cloud Run / Cloud Functions / IAP** 這類「服務端點」→ 用 **ID token**（audience = 目標 URL）。
 > 呼叫 **Google Cloud API**（Firestore、GCS…）→ 用 **access token**（scope）。搞錯就是 401。
 
-### 7. 流量管理與漸進發布
+#### 7. 流量管理與漸進發布
 ```bash
 # 部署新版但不給流量，掛 tag
 gcloud run deploy api --image IMG --no-traffic --tag canary
@@ -157,17 +160,17 @@ gcloud run services update-traffic api --to-revisions api-00007-abc=100   # 回�
 ```
 詳見 [[Cloud Deploy 與部署策略]]。
 
-### 8. 網路出口
+#### 8. 網路出口
 - **Direct VPC egress**（較新、推薦）：實例直接取得 VPC 內 IP，不需要 connector，延遲與擴充性較好。
 - **Serverless VPC Access connector**（傳統）：透過 connector 進 VPC。
 - `--vpc-egress=private-ranges-only`（只有內部流量走 VPC）或 `all-traffic`（全部走 VPC，可搭 Cloud NAT 固定出口 IP）。
 - 詳見 [[VPC 連線 Serverless VPC Access 與 Direct VPC Egress]]。
 
-### 9. 多容器（Sidecar）
+#### 9. 多容器（Sidecar）
 一個 revision 可以有多個容器：一個 **ingress container**（收請求）+ 多個 **sidecar**（例如 OTel collector、Nginx、代理）。共用網路命名空間，用 `localhost` 互通。
 > 但 **沒有 DaemonSet / 節點層級** 的概念 → 需要那些就上 [[GKE 基礎與 Autopilot]]。
 
-### 10. Volume 掛載
+#### 10. Volume 掛載
 - **Secret Manager** 祕密（檔案或環境變數）
 - **Cloud Storage bucket**（透過 GCS FUSE，gen2）
 - **NFS / Filestore**
@@ -175,7 +178,7 @@ gcloud run services update-traffic api --to-revisions api-00007-abc=100   # 回�
 
 ---
 
-## 🔢 關鍵設定與限制（查核日 2026-09-27）
+### 🔢 關鍵設定與限制（查核日 2026-09-27）
 
 | 項目 | 值 |
 |---|---|
@@ -197,7 +200,7 @@ gcloud run services update-traffic api --to-revisions api-00007-abc=100   # 回�
 
 ---
 
-## ⚙️ 常用操作
+### ⚙️ 常用操作
 
 ```bash
 # 從原始碼部署（Buildpacks 自動建映像，不需 Dockerfile）
@@ -255,7 +258,10 @@ spec:
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -275,7 +281,7 @@ spec:
 
 ---
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **冷啟動被低估**：JVM/大型依賴的冷啟動可達數秒。解法：`min-instances`、startup CPU boost、瘦身映像（distroless）、延遲載入非必要模組。
 2. **連線池 × 實例數 = 災難**：每實例 10 條 × 100 實例 = 1000 條連線打爆 Cloud SQL。務必同時調小連線池與 `max-instances`。
@@ -288,7 +294,7 @@ spec:
 
 ---
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Cloud Run 的 Service / Revision / Instance 各是什麼？回滾為什麼可以是秒級？
 2. `--concurrency` 預設是多少？調成 1 的兩個正當理由是什麼？

@@ -19,7 +19,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart TD
@@ -50,7 +53,7 @@ flowchart TD
 
 ---
 
-## 🎭 角色的三種類型
+### 🎭 角色的三種類型
 
 | 類型 | 例子 | 何時用 |
 |---|---|---|
@@ -58,7 +61,7 @@ flowchart TD
 | **Predefined（預先定義）** | `roles/run.invoker`、`roles/pubsub.publisher`、`roles/storage.objectViewer` | ⭐ **預設選擇** |
 | **Custom（自訂）** | 自己挑 permission 組合 | 預定義角色仍過寬時；維護成本較高 |
 
-### 開發者最該記的預定義角色
+#### 開發者最該記的預定義角色
 | 角色 | 能做什麼 |
 |---|---|
 | `roles/run.invoker` | 呼叫 Cloud Run 服務 |
@@ -83,9 +86,9 @@ flowchart TD
 
 ---
 
-## 🤖 服務帳戶（Service Account）
+### 🤖 服務帳戶（Service Account）
 
-### 三種使用方式（**安全性由高到低**）
+#### 三種使用方式（**安全性由高到低**）
 | 方式 | 說明 | 評價 |
 |---|---|---|
 | **① 附加到資源** | Cloud Run / GKE（Workload Identity）/ GCE 以該 SA 身分執行；ADC 自動取得 token | ⭐⭐⭐ **最推薦**，完全沒有長期憑證 |
@@ -107,12 +110,12 @@ gcloud storage ls --impersonate-service-account=api-sa@$PROJECT.iam.gserviceacco
 # constraints/iam.disableServiceAccountKeyCreation
 ```
 
-### 服務帳戶的雙重身分（容易混淆）
+#### 服務帳戶的雙重身分（容易混淆）
 一個 SA 同時是：
 1. **Principal（身分）**：可以被授予角色 → `--member=serviceAccount:x@...`
 2. **Resource（資源）**：本身可以有 IAM 政策（誰能 impersonate 它、誰能 actAs 它）
 
-### ⚠️ 預設服務帳戶（考試常考的反模式）
+#### ⚠️ 預設服務帳戶（考試常考的反模式）
 | 預設 SA | 預設權限 | 問題 |
 |---|---|---|
 | **Compute Engine 預設 SA**（`PROJECT_NUMBER-compute@…`） | 傳統上有 `roles/editor` | 權限過大；Cloud Run / GCE 不指定 SA 時就用它 |
@@ -123,7 +126,7 @@ gcloud storage ls --impersonate-service-account=api-sa@$PROJECT.iam.gserviceacco
 
 ---
 
-## 🎯 最小權限實作範例
+### 🎯 最小權限實作範例
 
 ```bash
 # 訂單服務：只需要讀祕密、寫 Firestore、發 Pub/Sub、寫 log/trace
@@ -150,9 +153,9 @@ gcloud run deploy orders --service-account=$SA
 
 ---
 
-## 🧩 進階機制
+### 🧩 進階機制
 
-### IAM Conditions（條件式存取）
+#### IAM Conditions（條件式存取）
 ```bash
 # 只允許在特定時間、對特定前綴的物件存取
 gcloud storage buckets add-iam-policy-binding gs://reports \
@@ -162,11 +165,11 @@ gcloud storage buckets add-iam-policy-binding gs://reports \
 常用條件屬性：`request.time`、`resource.name`、`resource.type`、`request.path`。
 > 考點：「只在上班時間可存取」、「只能存取名稱以 X 開頭的資源」→ **IAM Condition**。
 
-### IAM Deny Policy
+#### IAM Deny Policy
 在 org/folder/project 上明確**拒絕**某些權限，**優先於所有 allow**。
 > 考點：「即使有人被授予 Editor，也絕對不能刪除 bucket」→ **Deny policy**。
 
-### 其他相關
+#### 其他相關
 | 機制 | 用途 |
 |---|---|
 | **Organization Policy（組織政策）** | 限制「能不能做某類設定」（例如禁止建立 SA 金鑰、禁止公開 bucket、限制可用 region） |
@@ -176,7 +179,10 @@ gcloud storage buckets add-iam-policy-binding gs://reports \
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -193,7 +199,7 @@ gcloud storage buckets add-iam-policy-binding gs://reports \
 | `audit who read the data` | 啟用 **Data Access audit logs** |
 | `prevent data exfiltration between projects` | **VPC Service Controls** |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **用預設 compute SA 跑所有服務**：一旦被入侵，等於整個專案被拿下。
 2. **在 project 層級給 `roles/storage.admin`**：只是要讀一個 bucket 卻能刪所有 bucket。
@@ -202,7 +208,7 @@ gcloud storage buckets add-iam-policy-binding gs://reports \
 5. **忘了 `actAs`**：部署指定 SA 時出現難懂的權限錯誤。
 6. **Data Access log 沒開就想查誰讀了資料**：查不到（Admin Activity 只記管理操作）。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. IAM 的三種角色類型？考試中哪一種幾乎永遠是錯的？
 2. `serviceAccountUser` 與 `serviceAccountTokenCreator` 的差別？各在什麼場景用？

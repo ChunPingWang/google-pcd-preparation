@@ -23,7 +23,10 @@ updated: 2026-09-27
 
 ---
 
-## 🖥 Compute Engine 你需要知道的最小集合
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🖥 Compute Engine 你需要知道的最小集合
 
 | 概念 | 說明 | 為什麼開發者要知道 |
 |---|---|---|
@@ -37,7 +40,7 @@ updated: 2026-09-27
 | **Local SSD** | 實體連接、超低延遲、**VM 停止就消失** | 只放暫存/快取 |
 | **Sole-tenant node** | 專屬實體主機 | 授權合規（BYOL） |
 
-### MIG 的三個能力（考題常問「傳統 VM 怎麼變可靠」）
+#### MIG 的三個能力（考題常問「傳統 VM 怎麼變可靠」）
 ```mermaid
 flowchart LR
     T["Instance Template"] --> MIG["Managed Instance Group"]
@@ -47,7 +50,7 @@ flowchart LR
     LB["Load Balancer"] --> MIG
 ```
 
-### 什麼時候「真的」該選 Compute Engine
+#### 什麼時候「真的」該選 Compute Engine
 | 訊號 | 原因 |
 |---|---|
 | 需要**特定作業系統/核心模組/驅動** | 容器平台無法提供 |
@@ -62,7 +65,7 @@ flowchart LR
 > 題目說 `minimal operational overhead` / `no server management` → **Cloud Run / GKE Autopilot**。
 > 這兩組關鍵詞是互斥的，抓到就能砍掉一半選項。
 
-### 現代化路徑（Section 1 的「應用現代化」考點）
+#### 現代化路徑（Section 1 的「應用現代化」考點）
 ```mermaid
 flowchart LR
     VM["單體在 VM 上"] -->|"容器化<br/>寫 Dockerfile"| C["容器"]
@@ -76,7 +79,7 @@ flowchart LR
 
 ---
 
-## 🏗 App Engine 你需要知道的最小集合
+### 🏗 App Engine 你需要知道的最小集合
 
 | | **Standard 環境** | **Flexible 環境** |
 |---|---|---|
@@ -100,7 +103,10 @@ flowchart LR
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -113,7 +119,7 @@ flowchart LR
 | `既有 App Engine 應用要加新的容器化服務` | 新服務用 Cloud Run，共存 |
 | `全新專案、無伺服器、HTTP` | **Cloud Run**（不是 App Engine） |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **單台 VM 沒有 MIG**：VM 掛了沒人救。要高可用一定是 MIG + 健康檢查 + 跨 zone。
 2. **在啟動腳本裡裝一堆套件**：擴充時啟動要 5 分鐘，來不及應付尖峰。改用自訂映像。
@@ -121,7 +127,7 @@ flowchart LR
 4. **Spot VM 用在需要持續運行的服務**：隨時被回收。
 5. **App Engine Flexible 以為能縮到 0**：它不行，會一直計費。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 什麼三種情況下 Compute Engine 才是比 Cloud Run / GKE 更好的答案？
 2. MIG 提供哪三個能力？沒有 MIG 的單台 VM 缺了什麼？

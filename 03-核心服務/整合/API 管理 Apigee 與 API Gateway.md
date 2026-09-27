@@ -20,7 +20,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 三個選項的層級
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 三個選項的層級
 
 ```mermaid
 flowchart LR
@@ -52,7 +55,7 @@ flowchart LR
 
 ---
 
-## 🔧 API Gateway 實作要點
+### 🔧 API Gateway 實作要點
 
 ```yaml
 # openapi.yaml — API Gateway 的設定核心
@@ -114,7 +117,7 @@ gcloud api-gateway gateways create orders-gw --api=orders-api --api-config=v1 --
 
 ---
 
-## 🏛 Apigee 要記的概念（不需要很深）
+### 🏛 Apigee 要記的概念（不需要很深）
 
 | 概念 | 說明 |
 |---|---|
@@ -133,7 +136,7 @@ gcloud api-gateway gateways create orders-gw --api=orders-api --api-config=v1 --
 
 ---
 
-## 🔐 API 的驗證選項總覽（考試常混在一起問）
+### 🔐 API 的驗證選項總覽（考試常混在一起問）
 
 | 需求 | 機制 |
 |---|---|
@@ -150,7 +153,7 @@ gcloud api-gateway gateways create orders-gw --api=orders-api --api-config=v1 --
 
 ---
 
-## 🧱 API 版本化與相容性（Section 3.1 考點）
+### 🧱 API 版本化與相容性（Section 3.1 考點）
 
 | 做法 | 範例 | 評價 |
 |---|---|---|
@@ -165,7 +168,10 @@ gcloud api-gateway gateways create orders-gw --api=orders-api --api-config=v1 --
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -180,7 +186,7 @@ gcloud api-gateway gateways create orders-gw --api=orders-api --api-config=v1 --
 | `breaking change to API` | **新版本路徑 `/v2`** + 棄用流程 |
 | `既有地端 API 也要納管` | **Apigee**（API Gateway 主要面向 GCP serverless） |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **把 API key 當成安全機制**：key 洩漏就等於裸奔。至少加上配額 + 監控異常。
 2. **Gateway 後面的 Cloud Run 還是公開的**：繞過 Gateway 直接打後端 → 一定要設 `--no-allow-unauthenticated` 或 `--ingress=internal`。
@@ -189,7 +195,7 @@ gcloud api-gateway gateways create orders-gw --api=orders-api --api-config=v1 --
 5. **版本化沒有棄用計畫**：v1 永遠下不了線。
 6. **在 Gateway 做重運算的轉換**：延遲增加且難以除錯。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. API Gateway 與 Apigee 的五個維度差異？題目出現哪些詞就選 Apigee？
 2. 如何確保「只有 API Gateway 能呼叫後端 Cloud Run」？

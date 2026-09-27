@@ -19,7 +19,10 @@ updated: 2026-09-27
 
 ---
 
-## 🔍 Application Default Credentials (ADC)
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🔍 Application Default Credentials (ADC)
 
 **ADC 是一個「憑證搜尋策略」**，讓同一份程式碼在本機、CI、雲上都能自動找到身分。用戶端程式庫預設就用它。
 
@@ -58,7 +61,7 @@ credentials, project = google.auth.default()
 > 2. `GOOGLE_APPLICATION_CREDENTIALS` 指向的可以是 SA 金鑰，**也可以是 WIF 的設定檔**（外部身分）。
 > 3. 順序是固定的 → 本機「明明設了環境變數卻用到別的身分」通常是搞錯優先序。
 
-### Metadata server（值得記住的細節）
+#### Metadata server（值得記住的細節）
 ```bash
 # 在 GCE/GKE/Cloud Run 內部可直接取得 token（考題偶爾出現）
 curl -H "Metadata-Flavor: Google" \
@@ -72,7 +75,7 @@ curl -H "Metadata-Flavor: Google" \
 
 ---
 
-## 🎫 Access token vs ID token（**最高頻混淆點**）
+### 🎫 Access token vs ID token（**最高頻混淆點**）
 
 | | **Access token** | **ID token（JWT）** |
 |---|---|---|
@@ -100,7 +103,7 @@ requests.get(AUD + "/api", headers={"Authorization": f"Bearer {tok}"})
 
 ---
 
-## 🔑 OAuth 2.0 的三種流程（考試只需分辨用途）
+### 🔑 OAuth 2.0 的三種流程（考試只需分辨用途）
 
 | 流程 | 誰是主角 | 用途 |
 |---|---|---|
@@ -111,7 +114,7 @@ requests.get(AUD + "/api", headers={"Authorization": f"Bearer {tok}"})
 **Scope（範圍）**：access token 攜帶的權限範圍，例如 `https://www.googleapis.com/auth/cloud-platform`（最廣）、`…/devstorage.read_only`。
 > **Scope 限制 token 能做什麼，IAM 限制身分能做什麼 → 兩者都要通過。**
 
-### JWT 的結構與驗證（要能看懂）
+#### JWT 的結構與驗證（要能看懂）
 ```
 header.payload.signature
 
@@ -131,7 +134,7 @@ header.payload.signature
 
 ---
 
-## 🗄 資料庫的驗證：Auth Proxy 與 IAM 資料庫驗證
+### 🗄 資料庫的驗證：Auth Proxy 與 IAM 資料庫驗證
 
 官方指南特別點名 **Cloud SQL Auth Proxy** 與 **AlloyDB Auth Proxy**。
 
@@ -156,7 +159,7 @@ flowchart LR
 
 ---
 
-## 👤 終端使用者驗證（vs 服務身分）
+### 👤 終端使用者驗證（vs 服務身分）
 
 | 你要驗證的對象 | 用什麼 |
 |---|---|
@@ -171,7 +174,10 @@ flowchart LR
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -188,7 +194,7 @@ flowchart LR
 | `external CI (GitHub Actions) deploying to GCP` | **Workload Identity Federation** |
 | `verify a JWT` | 驗簽 + `iss` + **`aud`** + `exp` |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **本機用自己的帳號跑通，上雲後 403**：本機是你的個人權限，雲上是 SA 權限 → 開發時就用 impersonation 模擬 SA。
 2. **把 `GOOGLE_APPLICATION_CREDENTIALS` 設在生產容器裡**：等於放了長期金鑰。雲上根本不需要。
@@ -197,7 +203,7 @@ flowchart LR
 5. **忽略 `aud`**：接受了給別的服務的 token（token 重放攻擊）。
 6. **用 API key 存取需要使用者身分的資源**：API key 不代表身分。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 完整說出 ADC 的搜尋順序（三個位置）。在 Cloud Run 上走到哪一步？
 2. Access token 與 ID token 的差別？各用來呼叫什麼？搞錯的錯誤碼是什麼？

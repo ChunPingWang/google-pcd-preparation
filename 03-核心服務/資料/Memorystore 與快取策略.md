@@ -19,7 +19,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 快取在架構中的位置
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 快取在架構中的位置
 
 ```mermaid
 flowchart LR
@@ -43,7 +46,7 @@ flowchart LR
 
 ---
 
-## 🗃 Memorystore 的三種引擎
+### 🗃 Memorystore 的三種引擎
 
 | 引擎 | 特性 | 用途 |
 |---|---|---|
@@ -66,9 +69,9 @@ flowchart LR
 
 ---
 
-## 🔄 快取模式（必懂）
+### 🔄 快取模式（必懂）
 
-### 1. Cache-aside（Lazy loading）— **預設模式**
+#### 1. Cache-aside（Lazy loading）— **預設模式**
 ```python
 def get_product(pid):
     key = f"product:{pid}"
@@ -81,18 +84,18 @@ def get_product(pid):
 ```
 ✅ 只快取真正被用到的資料｜❌ 第一次一定 miss；資料可能過期
 
-### 2. Write-through
+#### 2. Write-through
 寫入時同時寫快取與資料庫 → 快取永遠是熱的，但寫入變慢。
 
-### 3. Write-behind（write-back）
+#### 3. Write-behind（write-back）
 先寫快取，非同步刷回資料庫 → 寫入極快，但**快取掉了會丟資料**。高風險，很少用在正確性要求高的場景。
 
-### 4. Read-through
+#### 4. Read-through
 由快取層自己負責在 miss 時載入（需要中介層支援）。
 
 ---
 
-## 💥 三大快取災難與解法（考題愛考）
+### 💥 三大快取災難與解法（考題愛考）
 
 | 問題 | 現象 | 解法 |
 |---|---|---|
@@ -115,7 +118,7 @@ def get_hot(key):
     return r.get(key) or db.load(key)
 ```
 
-## ♻️ 失效策略（invalidation）
+### ♻️ 失效策略（invalidation）
 | 策略 | 說明 | 適用 |
 |---|---|---|
 | **TTL 過期** | 最簡單，容忍一段時間的不一致 | 絕大多數場景 |
@@ -129,7 +132,7 @@ def get_hot(key):
 
 ---
 
-## 🧰 Redis 在系統設計中的其他用途（Section 1 常見）
+### 🧰 Redis 在系統設計中的其他用途（Section 1 常見）
 
 | 用途 | 做法 |
 |---|---|
@@ -154,7 +157,10 @@ def allow(user_id, limit=100, window=60):
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -170,7 +176,7 @@ def allow(user_id, limit=100, window=60):
 | 大量 key 同時過期打爆 DB | TTL **抖動** + 預熱 |
 | 熱門 key 重建打爆 DB | **互斥鎖 / single-flight** |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **Basic tier 用在生產 session**：節點重啟 → 所有使用者被登出。
 2. **忘了 Cloud Run 要進 VPC**：連不上 Memorystore（私有 IP），錯誤是 timeout 而不是明確的權限錯誤。
@@ -179,7 +185,7 @@ def allow(user_id, limit=100, window=60):
 5. **把快取當可靠儲存**：Redis 不是資料庫，重要資料要有來源。
 6. **快取與 DB 不一致造成業務錯誤**（如庫存）→ 強一致需求不要快取，或用短 TTL + 交易驗證。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. cache-aside 的三個步驟？優缺點？
 2. 快取穿透、雪崩、擊穿分別是什麼？各自的標準解法？

@@ -19,7 +19,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart TD
@@ -46,16 +49,16 @@ flowchart TD
 
 ---
 
-## 🔑 Row key 設計（**Bigtable 的全部**）
+### 🔑 Row key 設計（**Bigtable 的全部**）
 
-### 能做的查詢只有三種
+#### 能做的查詢只有三種
 1. 單一 row key 的 **point lookup**
 2. row key 的 **range scan**（前綴或起訖）
 3. 全表掃描（極慢，避免）
 
 → **所有查詢需求都必須編碼進 row key。**
 
-### 反模式與修法
+#### 反模式與修法
 | ❌ 反模式 | 為什麼壞 | ✅ 修法 |
 |---|---|---|
 | `timestamp` 開頭 | 所有新寫入集中在最後一個 tablet → **熱點** | **欄位翻轉（field promotion）**：把高基數欄位放前面 → `deviceId#timestamp` |
@@ -84,7 +87,7 @@ prefix = "sensor-8842#temp#"
 
 ---
 
-## 🔁 複寫與 App Profile
+### 🔁 複寫與 App Profile
 
 | 概念 | 說明 |
 |---|---|
@@ -100,7 +103,7 @@ prefix = "sensor-8842#temp#"
 
 ---
 
-## ⚖️ 一致性與交易
+### ⚖️ 一致性與交易
 
 | 能力 | 支援？ |
 |---|---|
@@ -116,7 +119,7 @@ prefix = "sensor-8842#temp#"
 
 ---
 
-## 📏 容量與效能
+### 📏 容量與效能
 
 | 概念 | 說明 |
 |---|---|
@@ -131,7 +134,7 @@ prefix = "sensor-8842#temp#"
 
 ---
 
-## ⚙️ 常用操作
+### ⚙️ 常用操作
 
 ```bash
 gcloud bigtable instances create prod-bt --display-name="prod" \
@@ -161,7 +164,10 @@ rows = table.read_rows(row_set=RowSet(row_ranges=[RowRange(start_key=b"sensor-88
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -178,7 +184,7 @@ rows = table.read_rows(row_set=RowSet(row_ranges=[RowRange(start_key=b"sensor-88
 | `低流量、想縮到 0` | **不是** Bigtable → Firestore |
 | `需要二級索引` | **不是** Bigtable（要自建索引表）→ 考慮 Firestore/Spanner |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **用 timestamp 當 row key 前綴**：教科書級錯誤，寫入全打在一個 tablet。
 2. **建太多 column family**：影響效能與管理；用 qualifier 區分即可。
@@ -187,7 +193,7 @@ rows = table.read_rows(row_set=RowSet(row_ranges=[RowRange(start_key=b"sensor-88
 5. **節點數太少就做大量掃描**：CPU 飆到 100%，線上延遲崩壞。
 6. **低流量卻用 Bigtable**：最小 instance 的固定成本吃掉整個預算。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Bigtable 支援哪三種查詢？這對 schema 設計有什麼強制性影響？
 2. `timestamp#deviceId` 與 `deviceId#timestamp` 哪個好？為什麼？

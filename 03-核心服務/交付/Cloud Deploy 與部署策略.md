@@ -20,7 +20,10 @@ updated: 2026-09-27
 
 ---
 
-## 🎭 五種部署策略（**必背對照表**）
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🎭 五種部署策略（**必背對照表**）
 
 ```mermaid
 flowchart TB
@@ -54,7 +57,7 @@ flowchart TB
 > - **A/B testing** 的目的是**比較商業成效**（轉換率）→ 分流依**使用者屬性**，看的是**業務指標**。
 > 題目說 `compare conversion rates` → A/B；說 `reduce risk of a bad release` → canary。
 
-### ⚠️ 所有漸進式策略的隱含前提
+#### ⚠️ 所有漸進式策略的隱含前提
 **新舊版本必須能同時存在** → 這要求：
 1. **資料庫 schema 向後相容**（先加欄位、不要立刻刪；用 expand-contract 模式）
 2. **API 向後相容**（見 [[API 設計 REST 與 gRPC]]）
@@ -63,9 +66,9 @@ flowchart TB
 
 ---
 
-## 🚦 各平台的實作方式
+### 🚦 各平台的實作方式
 
-### Cloud Run（最簡單）
+#### Cloud Run（最簡單）
 ```bash
 # 部署但不給流量 + 掛 tag → 可用 tag URL 做 E2E 測試
 gcloud run deploy api --image IMG --no-traffic --tag canary
@@ -83,7 +86,7 @@ gcloud run services update-traffic api --to-revisions api-00007-abc=100
 ```
 > **Cloud Run 的優勢**：流量分流是平台內建功能，回滾是**改設定**而非重新部署 → 秒級。
 
-### GKE
+#### GKE
 | 方法 | 說明 |
 |---|---|
 | **Rolling update**（預設） | `maxSurge` / `maxUnavailable` 控制節奏；`kubectl rollout undo` 回滾 |
@@ -104,7 +107,7 @@ spec:
 
 ---
 
-## 🚚 Cloud Deploy
+### 🚚 Cloud Deploy
 
 **定位**：代管的**持續交付（CD）**服務 — 管理「**同一個產出物依序晉升（promote）過多個環境**」的流程。
 
@@ -174,7 +177,7 @@ gcloud deploy rollouts approve ROLLOUT --delivery-pipeline=api-pipeline --releas
 
 ---
 
-## 🔙 回滾的三個層次
+### 🔙 回滾的三個層次
 
 | 層次 | 方法 | 速度 |
 |---|---|---|
@@ -190,7 +193,10 @@ gcloud deploy rollouts approve ROLLOUT --delivery-pipeline=api-pipeline --releas
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -206,7 +212,7 @@ gcloud deploy rollouts approve ROLLOUT --delivery-pipeline=api-pipeline --releas
 | `新舊版本同時在線` 的前置條件 | **向後相容**（API / schema / 訊息） |
 | `資料庫變更怎麼安全發布` | **expand-contract**（先加、後遷、最後刪） |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **canary 沒有觀測指標**：分了 10% 流量卻沒看錯誤率 → 等於盲目發布。要搭 [[Cloud Monitoring 與 SLO]] 的 SLO/error budget。
 2. **schema 破壞性變更 + rolling update**：舊版本讀到新 schema 直接崩。
@@ -215,7 +221,7 @@ gcloud deploy rollouts approve ROLLOUT --delivery-pipeline=api-pipeline --releas
 5. **Cloud Run canary 用 `latest` tag**：`--to-latest` 會把流量全給最新，失去控制。
 6. **健康檢查通過但業務壞掉**：canary 的驗證要看**業務指標**，不只是 HTTP 200。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 五種部署策略的優缺點與適用場景？
 2. Canary 與 A/B testing 的目的差異？題目怎麼區分？

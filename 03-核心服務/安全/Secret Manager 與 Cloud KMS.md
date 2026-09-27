@@ -21,7 +21,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 兩者的關係
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 兩者的關係
 
 ```mermaid
 flowchart LR
@@ -34,9 +37,9 @@ flowchart LR
 
 ---
 
-## 🔐 Secret Manager
+### 🔐 Secret Manager
 
-### 核心概念
+#### 核心概念
 | 概念 | 說明 |
 |---|---|
 | **Secret** | 容器（有名稱、IAM 政策、複寫設定、輪替設定） |
@@ -64,7 +67,7 @@ gcloud secrets update db-password \
   --topic=projects/$PROJECT/topics/secret-rotation
 ```
 
-### 在 Cloud Run / GKE 使用
+#### 在 Cloud Run / GKE 使用
 ```bash
 # Cloud Run：注入為環境變數（啟動時解析一次）
 gcloud run deploy api --set-secrets="DB_PASS=db-password:latest"
@@ -90,7 +93,7 @@ spec:
 > - `db-password:3`（釘住）：可重現、可控，**但輪替後要重新部署**。
 > **生產環境建議釘住版本 + 有意識地升版**；考題若強調「自動取得輪替後的新密碼」則用 `latest` + volume 掛載。
 
-### 程式碼讀取（含快取）
+#### 程式碼讀取（含快取）
 ```python
 from google.cloud import secretmanager
 from functools import lru_cache
@@ -106,9 +109,9 @@ def get_secret(name: str, version="latest") -> str:
 
 ---
 
-## 🗝 Cloud KMS
+### 🗝 Cloud KMS
 
-### 階層與概念
+#### 階層與概念
 ```
 Project → Location → KeyRing → CryptoKey → CryptoKeyVersion
 ```
@@ -120,7 +123,7 @@ Project → Location → KeyRing → CryptoKey → CryptoKeyVersion
 | **自動輪替** | `--rotation-period=90d` → 新的加密用新版本，解密自動找對版本 |
 | **保護等級** | `SOFTWARE`、**`HSM`**（FIPS 140-2 Level 3）、`EXTERNAL`（EKM，金鑰在你的外部 KMS） |
 
-### 三種加密模式（**必考對照**）
+#### 三種加密模式（**必考對照**）
 | 模式 | 誰持有金鑰 | 說明 |
 |---|---|---|
 | **Google-managed（預設）** | Google | 所有資料預設就加密，你什麼都不用做 |
@@ -134,7 +137,7 @@ Project → Location → KeyRing → CryptoKey → CryptoKeyVersion
 > - `符合 FIPS 140-2 Level 3` → **HSM 保護等級**
 > - 沒有特別要求 → 預設加密就夠（不要過度設計）
 
-### 信封加密（Envelope Encryption）
+#### 信封加密（Envelope Encryption）
 ```mermaid
 flowchart LR
     D["大量資料"] -->|"用 DEK 加密 (本機、快速)"| ED["加密後的資料"]
@@ -167,7 +170,7 @@ dec = client.decrypt(request={"name": key, "ciphertext": enc.ciphertext})
 
 ---
 
-## ⚖️ Secret Manager vs 其他存放方式
+### ⚖️ Secret Manager vs 其他存放方式
 
 | 方式 | 評價 |
 |---|---|
@@ -179,7 +182,10 @@ dec = client.decrypt(request={"name": key, "ciphertext": enc.ciphertext})
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -196,7 +202,7 @@ dec = client.decrypt(request={"name": key, "ciphertext": enc.ciphertext})
 | `Kubernetes Secret 不夠安全` | **Secret Manager CSI driver** |
 | 每個請求都讀祕密造成延遲 | 啟動時讀一次 / **快取** |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **在請求路徑上呼叫 Secret Manager**：延遲 + 配額。啟動載入或快取。
 2. **用 `latest` 卻以環境變數注入**：env 只在啟動時解析 → 輪替後沒生效，還以為會自動更新。
@@ -205,7 +211,7 @@ dec = client.decrypt(request={"name": key, "ciphertext": enc.ciphertext})
 5. **KeyRing 建錯 location**：不能移動也不能刪除。
 6. **把整個專案的 `secretAccessor` 給服務**：能讀所有祕密。要在**單一祕密**上授權。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Secret Manager 與 Cloud KMS 的分工？各存什麼？
 2. `latest` 與釘住版本的取捨？「不重新部署就取得新密碼」該怎麼配置？

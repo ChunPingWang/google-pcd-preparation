@@ -20,7 +20,10 @@ updated_note: 官方統稱 Google Cloud Observability
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart LR
@@ -39,7 +42,7 @@ flowchart LR
 
 ---
 
-## 🧱 結構化記錄（Structured Logging）— **最重要的實作考點**
+### 🧱 結構化記錄（Structured Logging）— **最重要的實作考點**
 
 在 Cloud Run / GKE / Functions 上，**直接把 JSON 寫到 stdout**，Logging 會自動解析成 `jsonPayload`：
 
@@ -76,13 +79,13 @@ log("ERROR", "payment failed", order_id="o-987", error_code="CARD_DECLINED")
 > 非結構化（純文字）log **只能字串比對**；結構化後可以 `jsonPayload.order_id="o-987"` 精準查詢、可做 log-based metric、可關聯 trace。
 > 考題：「如何能依 order ID 快速找到某筆訂單的所有 log」→ **結構化記錄 + 欄位查詢**。
 
-### 多行 stack trace 的處理
+#### 多行 stack trace 的處理
 Python/Java 的 exception 是多行 → 若直接 print，會被拆成多筆 log。
 **解法**：用結構化 log 把整個 stack trace 放在單一欄位（`message` 或 `stack_trace`），並設 `severity: ERROR` → 這也是 **Error Reporting 能正確聚合** 的前提。
 
 ---
 
-## 🔍 查詢語言（Logging Query Language）
+### 🔍 查詢語言（Logging Query Language）
 
 ```
 # 基本
@@ -120,7 +123,7 @@ gcloud logging tail 'resource.labels.service_name="api"'      # 即時尾隨
 
 ---
 
-## 🚚 Log Router、Sink 與 Exclusion
+### 🚚 Log Router、Sink 與 Exclusion
 
 | 概念 | 說明 |
 |---|---|
@@ -162,7 +165,7 @@ gcloud logging buckets update _Default --location=global --retention-days=90
 
 ---
 
-## 📊 Log-based Metrics
+### 📊 Log-based Metrics
 
 把 log 轉成可以警示的指標。
 
@@ -186,7 +189,7 @@ gcloud logging metrics create payment_failures \
 
 ---
 
-## 🔐 權限與稽核
+### 🔐 權限與稽核
 
 | 角色 | 用途 |
 |---|---|
@@ -207,7 +210,10 @@ gcloud logging metrics create payment_failures \
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -224,7 +230,7 @@ gcloud logging metrics create payment_failures \
 | `Cloud Run 沒有 log` | SA 缺 `roles/logging.logWriter` |
 | `多行 stack trace 被拆成多筆` | 用結構化 log 把整個 trace 放一個欄位 |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **log 太多太貴**：健康檢查、DEBUG log 佔了 90% 的量。用 exclusion。
 2. **把敏感資料寫進 log**（密碼、信用卡、PII）：log 會被很多人看到且保留很久 → **遮罩/去識別化**（可用 Cloud DLP）。
@@ -233,7 +239,7 @@ gcloud logging metrics create payment_failures \
 5. **log-based metric 的 label 基數爆炸**：用 user ID 當 label → 指標數量爆炸、費用飆升。
 6. **以為 log 是永久的**：`_Default` 預設只留 30 天。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. 結構化記錄怎麼做？哪三個特殊欄位最重要？
 2. 要把一個請求在四個服務中的 log 一起撈出來，需要什麼？程式要做什麼？

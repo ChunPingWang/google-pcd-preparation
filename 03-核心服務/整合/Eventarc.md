@@ -19,7 +19,10 @@ updated: 2026-09-27
 
 ---
 
-## 🧠 心智模型
+## 📘 技術理解
+*原理、限制與實務操作 —— 不為考試也該懂的部分。*
+
+### 🧠 心智模型
 
 ```mermaid
 flowchart LR
@@ -49,7 +52,7 @@ flowchart LR
 
 ---
 
-## 🎯 三種事件來源（考點）
+### 🎯 三種事件來源（考點）
 
 | 來源類型 | 說明 | 延遲 | 範例事件類型 |
 |---|---|---|---|
@@ -64,7 +67,7 @@ flowchart LR
 
 ---
 
-## ⚙️ 建立觸發器
+### ⚙️ 建立觸發器
 
 ```bash
 # ① GCS 物件上傳 → Cloud Run
@@ -105,7 +108,7 @@ gcloud eventarc triggers create order-written \
 
 ---
 
-## 📦 接收 CloudEvent
+### 📦 接收 CloudEvent
 
 ```python
 import functions_framework
@@ -141,7 +144,7 @@ def handle():
 
 ---
 
-## 🆚 Eventarc vs Pub/Sub push vs Cloud Tasks
+### 🆚 Eventarc vs Pub/Sub push vs Cloud Tasks
 
 | | **Eventarc** | **Pub/Sub push** | **Cloud Tasks** |
 |---|---|---|---|
@@ -155,7 +158,10 @@ def handle():
 
 ---
 
-## 🎯 考點速記
+## 🎯 應試
+*考場上的提取線索與自我測驗 —— 備考期才需要。*
+
+### 🎯 考點速記
 
 | 看到題目說… | 就想到 |
 |---|---|
@@ -168,7 +174,7 @@ def handle():
 | `觸發 Workflows 編排多步驟` | Eventarc → Workflows |
 | `跨專案 / 第三方事件、進階路由` | Eventarc Advanced（bus / pipeline） |
 
-## 💣 真實場景陷阱
+### 💣 真實場景陷阱
 
 1. **Audit Log 觸發器沒啟用對應的 audit log**：建了觸發器但什麼都收不到。Data Access log 預設關閉。
 2. **GCS 事件的無限迴圈**：函式處理物件後又寫回**同一個 bucket** → 再次觸發自己。解法：輸出到不同 bucket 或用 prefix 過濾。
@@ -177,7 +183,7 @@ def handle():
 5. **觸發器的 region 與目標不一致**：GCS 的 bucket location 與 trigger location 需匹配規則。
 6. **IAM 少一塊**：最常見是漏了 `roles/run.invoker` 或 GCS 服務代理的 `pubsub.publisher`。
 
-## ✍️ 自我檢核
+### ✍️ 自我檢核
 
 1. Eventarc 的三種事件來源？各自的延遲特性？
 2. 「有人刪除了 BigQuery 資料集就通知我」該用哪種來源？前置條件是什麼？
